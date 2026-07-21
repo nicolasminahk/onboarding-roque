@@ -1139,12 +1139,12 @@ de cada uno.</pre>
   </div>
 
   <div class="prose reveal">
-    <h3>Magnific: upscale, generación y edición</h3>
-    <p><em>Upscale</em> es el proceso de aumentar la resolución de una imagen o un video sin perder nitidez, típico para llevar un archivo de campaña a tamaño de impresión o a una pantalla grande. Magnific cubre ese upscale, además de generación y edición de imagen: mejora de detalle, limpieza y ajustes puntuales sobre piezas ya generadas o fotografiadas.</p>
+    <h3>Magnific: generación y edición de imagen</h3>
+    <p>Magnific se usa por MCP igual que Higgsfield: para generar imagen y para editarla — mejora de detalle, limpieza y ajustes puntuales sobre piezas ya generadas o fotografiadas. También permite hacer <em>upscale</em> (aumentar la resolución de una imagen sin perder nitidez, útil para impresión), pero es un recurso puntual, no un paso central del proceso.</p>
   </div>
 
   <figure class="diagram reveal">
-    <svg viewBox="0 35 720 190" role="img" aria-label="Diagrama de flujo de producción: idea en el chat, prompts de generación, iteración, selección, upscale o ajuste y publicación, con un bucle de retorno entre iteración y prompts de generación">
+    <svg viewBox="0 35 720 190" role="img" aria-label="Diagrama de flujo de producción: idea en el chat, prompts de generación, iteración, selección, ajuste o edición y publicación, con un bucle de retorno entre iteración y prompts de generación">
       <defs>
         <marker id="s06-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
           <polygon points="0,0 10,5 0,10" fill="var(--steel)"/>
@@ -1166,8 +1166,8 @@ de cada uno.</pre>
       <text x="415" y="99" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="11" letter-spacing="1" fill="var(--ink)">SELECCIÓN</text>
 
       <rect x="475" y="60" width="100" height="70" rx="3" fill="var(--card)" stroke="var(--steel-2)" stroke-width="1.5"/>
-      <text x="525" y="91" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="11" letter-spacing="1" fill="var(--ink)">UPSCALE /</text>
-      <text x="525" y="105" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="11" letter-spacing="1" fill="var(--ink)">AJUSTE</text>
+      <text x="525" y="91" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="11" letter-spacing="1" fill="var(--ink)">AJUSTE /</text>
+      <text x="525" y="105" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="11" letter-spacing="1" fill="var(--ink)">EDICIÓN</text>
 
       <rect x="585" y="60" width="100" height="70" rx="3" fill="var(--card)" stroke="var(--steel-2)" stroke-width="1.5"/>
       <text x="635" y="99" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="11" letter-spacing="1" fill="var(--ink)">PUBLICACIÓN</text>
@@ -1203,7 +1203,7 @@ generada.</pre>
   </figure>
 
   <figure class="prompt-box reveal">
-    <figcaption>Ejemplo — upscale de foto de lookbook</figcaption>
+    <figcaption>Ejemplo — upscale puntual para impresión</figcaption>
     <pre>Hacé upscale de esta foto de lookbook a resolución
 de impresión y limpiá el ruido de la imagen. No
 toques la forma ni el brillo de la pieza, solo
@@ -1226,7 +1226,7 @@ mejorá nitidez y resolución del archivo.</pre>
     <span class="caution-label">Precaución</span>
     <ol>
       <li>Solo joyas reales del catálogo, usando referencias fotográficas de producto reales; la IA nunca inventa ni altera piezas.</li>
-      <li>El logo oficial es el monograma ДР en forma de rombo/escudo (DR cirílico); jamás logos generados o inventados por IA: siempre se incrusta el archivo real del logo.</li>
+      <li>El logo nunca se genera con IA ni se le pide a la IA que lo reproduzca; tampoco se adjunta como referencia de generación (está probado: no funciona). Cuando una pieza lo necesita, se incorpora después, en edición, desde el archivo oficial de la marca.</li>
       <li>Títulos en código de marca y en español rioplatense.</li>
       <li>Cero invención de piezas, logos o elementos de marca. Aplica a carruseles, videos e imágenes sin excepción.</li>
     </ol>
@@ -1244,13 +1244,13 @@ mejorá nitidez y resolución del archivo.</pre>
     </div>
 
     <div class="quiz-q" data-q>
-      <p class="quiz-question">¿Qué se hace con el logo ДР en una pieza generada con IA?</p>
+      <p class="quiz-question">¿Cómo se maneja el logo de 0800 en una pieza generada con IA?</p>
       <div class="quiz-opts" role="group" aria-label="Opciones de respuesta">
         <button class="quiz-opt" type="button">Pedirle a la IA que lo recree en el estilo de la pieza</button>
-        <button class="quiz-opt" type="button" data-correct>Incrustar el archivo real del logo; nunca uno generado por IA</button>
-        <button class="quiz-opt" type="button">Dejarlo afuera y agregarlo después a mano en el diseño final</button>
+        <button class="quiz-opt" type="button" data-correct>Dejarlo afuera de la generación y agregarlo después en edición, desde el archivo oficial</button>
+        <button class="quiz-opt" type="button">Adjuntarlo como referencia para que el generador lo copie fiel</button>
       </div>
-      <p class="quiz-explain" hidden>El logo oficial es un archivo fijo. La IA nunca lo genera ni lo recrea: se incrusta siempre el original.</p>
+      <p class="quiz-explain" hidden>Adjuntar el logo a la generación no funciona: nunca sale idéntico. El logo entra al final, en edición, desde el archivo oficial.</p>
     </div>
 
     <div class="quiz-q" data-q>
@@ -1570,19 +1570,19 @@ fuertes en contra de esta idea, sin suavizarlos.</pre>
     </div>
     <div class="def">
       <span class="def-term">Pipeline de contenido</span>
-      <svg class="def-mini" viewBox="0 0 260 72" role="img" aria-label="Imagen, luego upscale, luego ajuste final">
+      <svg class="def-mini" viewBox="0 0 260 72" role="img" aria-label="Imagen, luego edición, luego ajuste final">
         <rect x="4" y="23" width="66" height="26" rx="8" fill="var(--card)" stroke="var(--line)"/>
         <text x="37" y="40" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="var(--steel)">IMAGEN</text>
         <line x1="72" y1="36" x2="100" y2="36" stroke="var(--steel-2)" stroke-width="1.5"/>
         <polygon points="100,36 93,32 93,40" fill="var(--steel-2)"/>
         <rect x="102" y="23" width="66" height="26" rx="8" fill="var(--card)" stroke="var(--line)"/>
-        <text x="135" y="40" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="var(--steel)">UPSCALE</text>
+        <text x="135" y="40" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="var(--steel)">EDICIÓN</text>
         <line x1="170" y1="36" x2="198" y2="36" stroke="var(--steel-2)" stroke-width="1.5"/>
         <polygon points="198,36 191,32 191,40" fill="var(--steel-2)"/>
         <rect x="200" y="23" width="56" height="26" rx="8" fill="var(--tint)" stroke="var(--steel)"/>
         <text x="228" y="40" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="var(--steel)">AJUSTE</text>
       </svg>
-      <p>La cadena de pasos que se encadenan para producir una pieza de contenido —por ejemplo generar una imagen, escalarla, ajustarla— hasta llegar a un resultado publicable.</p>
+      <p>La cadena de pasos que se encadenan para producir una pieza de contenido —por ejemplo generar una imagen, editarla, ajustarla— hasta llegar a un resultado publicable.</p>
     </div>
     <div class="def">
       <span class="def-term">Producción (entorno)</span>
@@ -1634,7 +1634,7 @@ fuertes en contra de esta idea, sin suavizarlos.</pre>
         <text x="179" y="32" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="var(--steel)">MÁS</text>
         <text x="179" y="46" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="var(--steel)">DETALLE</text>
       </svg>
-      <p>El proceso de aumentar la resolución o calidad de una imagen o un video ya generado, sin tener que rehacerlo desde cero.</p>
+      <p>El proceso de aumentar la resolución o calidad de una imagen o un video ya generado, sin rehacerlo desde cero. Es un recurso puntual —por ejemplo para impresión—, no un paso obligatorio del pipeline.</p>
     </div>
     <div class="def">
       <span class="def-term">Vibe coding</span>
@@ -1708,6 +1708,39 @@ quemados, joya deformada, fondo desordenado.</pre>
     es cuánto se le permite "reinterpretar" al modelo.</p>
   </article>
 
+
+  <article class="resource reveal">
+    <header class="resource-head">
+      <h3>De STL a imagen de producto</h3>
+      <p class="resource-when">Usala cuando todavía no hay fotos de la pieza y se parte del archivo 3D:
+      una captura del STL crudo, en una sola posición, alcanza como referencia de geometría.</p>
+    </header>
+    <figure class="prompt-box" data-copy>
+      <figcaption>Plantilla — render desde captura de STL</figcaption>
+      <pre>[CAPTURA ADJUNTA: el STL crudo, sin material ni luz, en una
+sola posición clara — la misma que va a tener la imagen final]
+
+Convertí esta geometría en una foto realista de producto:
+[NOMBRE DE LA PIEZA], plata [TERMINACIÓN — ej. "925 pulida"
+o "con pátina oscura"].
+
+La forma es ley: respetá exactamente la geometría de la
+captura — proporciones, aristas, calados, eslabones. No
+embellezcas ni completes partes que no se ven; mantené la
+misma posición y el mismo ángulo de la captura.
+
+Material y luz: [DESCRIBIR — ej. "plata con reflejos duros,
+fondo neutro oscuro, luz de estudio lateral"].
+
+Sin logos, sin grabados nuevos, sin texto sobre la pieza.
+
+Negative prompt: geometría alterada, partes inventadas, otro
+ángulo, ornamentos agregados, look de render plástico.</pre>
+    </figure>
+    <p class="resource-tip">El STL crudo funciona mejor que un render lindo: al no traer material ni luz,
+    el modelo solo puede tomar de ahí la forma — y la forma es justo lo único que no puede cambiar.</p>
+  </article>
+
   <article class="resource reveal">
     <header class="resource-head">
       <h3>Persistencia con logo o identidad de marca</h3>
@@ -1735,9 +1768,9 @@ Negative prompt: logos inventados, monogramas, sellos,
 texto ilegible, marcas de agua, símbolos ambiguos en el
 área reservada.</pre>
     </figure>
-    <p class="resource-tip">El logo real (el monograma) se incrusta después en edición manual o con la
-    herramienta de diseño — nunca se le pide a un generador de imagen que lo dibuje, porque nunca va a
-    salir idéntico dos veces.</p>
+    <p class="resource-tip">El logo real se incorpora después, en edición manual o con la herramienta de
+    diseño. Tampoco sirve adjuntarlo como referencia de generación — está probado que el generador nunca
+    lo reproduce idéntico.</p>
   </article>
 
   <article class="resource reveal">
@@ -1782,9 +1815,9 @@ natural de la pieza.</pre>
 
   <article class="resource reveal">
     <header class="resource-head">
-      <h3>Upscale y limpieza para impresión</h3>
-      <p class="resource-when">Usala antes de mandar una imagen a imprenta (catálogo, cartelería, packaging)
-      o cuando una foto de producto salió con ruido o baja resolución.</p>
+      <h3>Upscale puntual para impresión</h3>
+      <p class="resource-when">Recurso puntual, no un paso obligatorio del pipeline: usala antes de mandar
+      una imagen a imprenta (catálogo, cartelería, packaging) o cuando una foto salió con poca resolución.</p>
     </header>
     <figure class="prompt-box" data-copy>
       <figcaption>Plantilla — upscale sin alterar la pieza (Magnific)</figcaption>
