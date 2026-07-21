@@ -1,0 +1,2061 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Onboarding 0800 — Claude como sistema de trabajo</title>
+<meta name="description" content="Documento de formación interna de 0800: operar Claude (Chat + Cowork, Claude Code y conexiones MCP) como sistema de trabajo para la marca.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   0800 · ONBOARDING v2 — sistema de diseño
+   Glass / Apple-like · colorido didáctico · animado
+   ============================================================ */
+:root{
+  --paper:#F5F5F7;
+  --paper-2:#ECECF1;
+  --card:#FFFFFF;
+  --ink:#1D1D1F;
+  --ink-2:#46464C;
+  --muted:#86868B;
+  --steel:#44464F;
+  --steel-2:#6E7178;
+  --metal:#B8BCC6;
+  --line:rgba(20,20,25,.08);
+  --line-2:rgba(20,20,25,.16);
+  --ok:#248A3D;
+  --ok-bg:#E9F7EE;
+  --err:#D70015;
+  --err-bg:#FDEDEC;
+  --tint:#007AFF;
+  --tint-ink:var(--tint);
+  --glass:rgba(255,255,255,.66);
+  --glass-brd:rgba(255,255,255,.75);
+  --shadow:0 20px 50px -24px rgba(29,29,31,.25), 0 2px 8px rgba(29,29,31,.04);
+  --sans:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Helvetica Neue","Segoe UI",Roboto,sans-serif;
+  --mono:ui-monospace,"SF Mono","IBM Plex Mono",Menlo,monospace;
+  --r-lg:22px;
+  --r-md:16px;
+  --r-sm:12px;
+  --col:900px;
+  --head-h:56px;
+}
+@supports (color:color-mix(in srgb,red 50%,blue)){
+  :root{--tint-ink:color-mix(in srgb,var(--tint) 74%, var(--ink))}
+}
+/* acentos por sección */
+#s00{--tint:#007AFF} #s01{--tint:#5856D6} #s02{--tint:#32ADE6} #s03{--tint:#AF52DE}
+#s04{--tint:#FF9500} #s05{--tint:#34C759} #s06{--tint:#FF2D55} #s06-1{--tint:#FF3B30}
+#s07{--tint:#00C7BE} #s08{--tint:#FF9F0A} #s09{--tint:#0A84FF} #s10{--tint:#5E5CE6}
+#s11{--tint:#30B0C7}
+
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:1.0625rem;
+  line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+}
+/* fondo: mesh de color suave, fijo */
+body::before{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(52% 42% at 12% 4%, rgba(0,122,255,.13), transparent 70%),
+    radial-gradient(46% 38% at 92% 12%, rgba(175,82,222,.12), transparent 70%),
+    radial-gradient(50% 44% at 80% 86%, rgba(48,176,199,.12), transparent 70%),
+    radial-gradient(42% 36% at 8% 90%, rgba(255,45,85,.08), transparent 70%);
+}
+::selection{background:rgba(0,122,255,.9);color:#fff}
+a{color:var(--tint-ink);text-decoration-color:rgba(0,0,0,.2);text-underline-offset:3px}
+a:hover{color:var(--ink)}
+:focus-visible{outline:2px solid var(--tint);outline-offset:2px;border-radius:4px}
+.skip{position:absolute;left:-9999px;top:0;background:var(--ink);color:#fff;padding:.6rem 1rem;z-index:99;font-family:var(--mono);font-size:.8rem}
+.skip:focus{left:0}
+
+/* ---------- cabecera glass + progreso ---------- */
+.topbar{
+  position:fixed;inset:0 0 auto 0;height:var(--head-h);z-index:50;
+  background:rgba(245,245,247,.72);
+  -webkit-backdrop-filter:saturate(1.8) blur(20px);
+  backdrop-filter:saturate(1.8) blur(20px);
+  border-bottom:1px solid rgba(20,20,25,.07);
+  color:var(--ink);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 clamp(1rem,4vw,2rem);
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;
+}
+.topbar .brand{display:flex;align-items:center;gap:.6rem;color:var(--ink);text-decoration:none;font-weight:600}
+.topbar .brand::before{
+  content:"";width:9px;height:9px;border-radius:50%;flex:none;
+  background:conic-gradient(from 0deg,#007AFF,#AF52DE,#FF2D55,#FF9500,#34C759,#007AFF);
+  animation:spin 6s linear infinite;
+}
+@keyframes spin{to{transform:rotate(1turn)}}
+.topbar .doc-tag{color:var(--muted)}
+.progress{
+  position:fixed;top:var(--head-h);left:0;right:0;height:3px;z-index:50;
+  background:transparent;
+}
+.progress i{
+  display:block;height:100%;width:0;border-radius:0 3px 3px 0;
+  background:linear-gradient(90deg,#007AFF,#AF52DE,#FF2D55);
+  background-size:100vw 100%;background-attachment:fixed;
+}
+
+/* ---------- columna ---------- */
+.wrap{max-width:var(--col);margin:0 auto;padding:0 clamp(1.1rem,4vw,2rem)}
+main{padding-top:var(--head-h)}
+
+/* ---------- portada ---------- */
+.cover{position:relative;padding-block:clamp(3.6rem,10vh,7rem) clamp(2.6rem,6vh,4.2rem)}
+.orb{position:absolute;border-radius:50%;filter:blur(60px);opacity:.5;pointer-events:none;z-index:-1}
+.orb-a{width:340px;height:340px;top:-60px;right:-80px;background:radial-gradient(circle at 35% 35%,#AF52DE,#007AFF 70%);animation:float-a 11s ease-in-out infinite alternate}
+.orb-b{width:260px;height:260px;bottom:-40px;left:-90px;background:radial-gradient(circle at 60% 40%,#32ADE6,#34C759 75%);animation:float-b 13s ease-in-out infinite alternate}
+@keyframes float-a{from{transform:translate(0,0) scale(1)}to{transform:translate(-36px,30px) scale(1.08)}}
+@keyframes float-b{from{transform:translate(0,0) scale(1)}to{transform:translate(30px,-24px) scale(1.06)}}
+.kicker{font-family:var(--mono);font-size:.74rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin:0 0 1.1rem;font-weight:500}
+.cover h1{
+  font-weight:800;
+  font-size:clamp(2.3rem,6vw,4rem);line-height:1.06;letter-spacing:-.03em;
+  margin:0 0 1.2rem;max-width:16ch;
+}
+.cover h1 em{
+  font-style:normal;
+  background:linear-gradient(92deg,#007AFF,#AF52DE 45%,#FF2D55 90%);
+  background-size:200% 100%;
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;color:transparent;
+  animation:hueflow 7s ease-in-out infinite alternate;
+}
+@keyframes hueflow{from{background-position:0% 0}to{background-position:100% 0}}
+.cover .lede{font-size:clamp(1.08rem,2vw,1.28rem);color:var(--ink-2);max-width:54ch;margin:0 0 2.6rem;line-height:1.6}
+.meta{
+  border:1px solid var(--glass-brd);border-radius:var(--r-lg);overflow:hidden;
+  background:var(--glass);
+  -webkit-backdrop-filter:saturate(1.5) blur(16px);backdrop-filter:saturate(1.5) blur(16px);
+  box-shadow:var(--shadow);
+}
+.meta table{width:100%;border-collapse:collapse;font-size:.95rem}
+.meta th,.meta td{padding:.78rem 1.2rem;text-align:left;vertical-align:top;border-top:1px solid var(--line)}
+.meta tr:first-child th,.meta tr:first-child td{border-top:0}
+.meta th{
+  width:200px;font-family:var(--mono);font-weight:500;font-size:.68rem;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--muted);
+  border-right:1px solid var(--line);
+}
+
+/* ---------- índice ---------- */
+.toc{padding-block:clamp(2.4rem,6vh,3.6rem)}
+.toc h2{font-family:var(--mono);font-size:.76rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin:0 0 1.2rem;font-weight:600}
+.toc ol{
+  list-style:none;margin:0;padding:.5rem;
+  background:var(--glass);border:1px solid var(--glass-brd);border-radius:var(--r-lg);
+  -webkit-backdrop-filter:saturate(1.5) blur(16px);backdrop-filter:saturate(1.5) blur(16px);
+  box-shadow:var(--shadow);
+}
+.toc li{margin:0}
+.toc li.sub a{padding-left:2.6rem}
+.toc a{
+  display:flex;align-items:baseline;gap:.9rem;
+  padding:.6rem .9rem;text-decoration:none;color:var(--ink);
+  border-radius:var(--r-sm);
+  transition:background .18s,transform .18s;
+}
+.toc a:hover{background:rgba(255,255,255,.9);transform:translateX(4px)}
+.toc .n{font-family:var(--mono);font-size:.76rem;font-weight:600;flex:none;width:2.3rem}
+.toc a[href="#s00"] .n{color:#007AFF}.toc a[href="#s01"] .n{color:#5856D6}
+.toc a[href="#s02"] .n{color:#32ADE6}.toc a[href="#s03"] .n{color:#AF52DE}
+.toc a[href="#s04"] .n{color:#FF9500}.toc a[href="#s05"] .n{color:#34C759}
+.toc a[href="#s06"] .n{color:#FF2D55}.toc a[href="#s06-1"] .n{color:#FF3B30}
+.toc a[href="#s07"] .n{color:#00C7BE}.toc a[href="#s08"] .n{color:#FF9F0A}
+.toc a[href="#s09"] .n{color:#0A84FF}.toc a[href="#s10"] .n{color:#5E5CE6}
+.toc a[href="#s11"] .n{color:#30B0C7}
+.toc .t{font-size:1rem;font-weight:500;letter-spacing:-.01em}
+.toc .dots{flex:1;border-bottom:1px dotted var(--line-2);transform:translateY(-4px)}
+.toc .chk{
+  font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;color:var(--muted);
+  flex:none;text-transform:uppercase;border:1px solid var(--line-2);
+  border-radius:999px;padding:.14rem .55rem;
+}
+
+/* ---------- secciones ---------- */
+.sec{padding-block:clamp(2.8rem,7vh,4.6rem);scroll-margin-top:calc(var(--head-h) + 16px);position:relative}
+.sec + .sec::before{
+  content:"";position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--line-2),transparent);
+}
+.sec-head{margin-bottom:2rem}
+.sec-mark{
+  display:inline-block;font-family:var(--mono);font-size:.68rem;font-weight:600;
+  letter-spacing:.18em;text-transform:uppercase;
+  color:var(--tint-ink);
+  background:color-mix(in srgb,var(--tint) 12%, #fff);
+  border:1px solid color-mix(in srgb,var(--tint) 28%, #fff);
+  border-radius:999px;padding:.32rem .95rem;margin-bottom:1.05rem;
+}
+@supports not (color:color-mix(in srgb,red 50%,blue)){
+  .sec-mark{background:#fff;border-color:var(--line-2)}
+}
+.sec h2{
+  font-weight:750;letter-spacing:-.025em;
+  font-size:clamp(1.7rem,3.8vw,2.4rem);line-height:1.14;margin:0 0 .55rem;
+}
+.sec-lede{color:var(--ink-2);font-size:1.12rem;margin:0;max-width:58ch}
+.sec h3{
+  font-weight:700;font-size:1.32rem;line-height:1.3;
+  margin:2.6rem 0 .8rem;letter-spacing:-.015em;
+}
+.sec h4,.step-t{font-weight:650;font-size:1rem;margin:0 0 .3rem;letter-spacing:-.01em;color:var(--ink)}
+.prose p{margin:0 0 1.05rem}
+.prose p:last-child{margin-bottom:0}
+.prose ul,.prose ol{margin:.2rem 0 1.05rem;padding-left:1.3rem}
+.prose li{margin-bottom:.45rem}
+.prose li::marker{color:var(--tint-ink);font-weight:600}
+.prose strong{font-weight:650}
+
+/* ---------- cajas de definición ---------- */
+.def-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.def{
+  background:var(--glass);border:1px solid var(--glass-brd);
+  border-radius:var(--r-md);padding:1.15rem 1.25rem 1.05rem;
+  -webkit-backdrop-filter:saturate(1.5) blur(14px);backdrop-filter:saturate(1.5) blur(14px);
+  box-shadow:0 14px 34px -26px rgba(29,29,31,.3);
+  transition:transform .22s cubic-bezier(.22,1,.36,1),box-shadow .22s;
+  position:relative;overflow:hidden;
+}
+.def::before{
+  content:"";position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--tint),transparent 85%);
+  border-radius:3px;opacity:.85;
+}
+.def:hover{transform:translateY(-3px);box-shadow:0 22px 44px -26px rgba(29,29,31,.4)}
+.def-term{
+  display:block;font-family:var(--mono);font-weight:600;font-size:.76rem;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--tint-ink);margin-bottom:.5rem;
+}
+.def p{margin:0;font-size:.95rem;line-height:1.6;color:var(--ink-2)}
+.def p em{color:var(--ink);font-style:normal;font-weight:600}
+.def-mini{display:block;width:100%;max-width:280px;height:auto;margin:.35rem 0 .7rem;border-radius:10px;background:rgba(255,255,255,.55)}
+
+/* ---------- notas y precauciones ---------- */
+.note,.caution{
+  border-radius:var(--r-md);padding:1.2rem 1.4rem;margin:1.6rem 0;
+  border:1px solid var(--glass-brd);
+  background:var(--glass);
+  -webkit-backdrop-filter:saturate(1.5) blur(14px);backdrop-filter:saturate(1.5) blur(14px);
+  box-shadow:0 14px 34px -26px rgba(29,29,31,.3);
+}
+.note{border-left:4px solid var(--tint)}
+.caution{
+  border-left:4px solid #FF9500;
+  background:linear-gradient(180deg,rgba(255,255,255,.8),rgba(255,244,235,.75));
+}
+.note-label,.caution-label{
+  display:inline-block;font-family:var(--mono);font-weight:600;font-size:.64rem;
+  letter-spacing:.18em;text-transform:uppercase;margin-bottom:.5rem;border-radius:999px;
+}
+.note-label{color:var(--tint-ink)}
+.caution-label{
+  color:#fff;background:linear-gradient(135deg,#FF9500,#FF3B30);padding:.26rem .75rem;
+}
+.note p,.caution p{margin:.2rem 0 0;color:var(--ink-2)}
+.caution p strong,.note p strong{color:var(--ink)}
+.caution ol{margin:.7rem 0 .2rem;padding-left:1.25rem}
+.caution li{margin-bottom:.55rem;color:var(--ink-2)}
+.caution li strong{color:var(--ink)}
+
+/* ---------- prompts ---------- */
+.prompt-box{
+  margin:1.6rem 0;border-radius:var(--r-md);overflow:hidden;
+  border:1px solid rgba(20,20,25,.5);
+  box-shadow:0 18px 40px -28px rgba(29,29,31,.6);
+  position:relative;
+}
+.prompt-box figcaption{
+  background:rgba(29,29,31,.97);color:#A8ADB8;
+  font-family:var(--mono);font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;
+  padding:.6rem 1.1rem;display:flex;align-items:center;gap:.6rem;
+  padding-right:5.4rem;
+}
+.prompt-box figcaption::before{
+  content:"";width:8px;height:8px;border-radius:50%;flex:none;
+  background:var(--tint);box-shadow:0 0 10px var(--tint);
+}
+.prompt-box pre{
+  margin:0;background:#141519;color:#E3E6EB;
+  font-family:var(--mono);font-size:.86rem;line-height:1.68;
+  padding:1.15rem 1.3rem;white-space:pre-wrap;word-break:break-word;
+}
+.copy-btn{
+  position:absolute;top:.42rem;right:.6rem;
+  font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;
+  color:#E3E6EB;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);
+  border-radius:999px;padding:.3rem .8rem;cursor:pointer;
+  transition:background .18s,transform .12s;
+}
+.copy-btn:hover{background:rgba(255,255,255,.28)}
+.copy-btn:active{transform:scale(.94)}
+.copy-btn.done{background:var(--ok);border-color:var(--ok);color:#fff}
+
+/* ---------- tablas de datos ---------- */
+.table-wrap{
+  margin:1.6rem 0;border:1px solid var(--glass-brd);border-radius:var(--r-md);overflow-x:auto;
+  background:var(--glass);
+  -webkit-backdrop-filter:saturate(1.5) blur(14px);backdrop-filter:saturate(1.5) blur(14px);
+  box-shadow:var(--shadow);
+}
+table.data{width:100%;border-collapse:collapse;font-size:.93rem;min-width:540px}
+table.data th{
+  font-family:var(--mono);font-weight:600;font-size:.66rem;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--tint-ink);text-align:left;
+  padding:.75rem 1.05rem;border-bottom:1px solid var(--line-2);
+}
+table.data td{padding:.8rem 1.05rem;border-bottom:1px solid var(--line);vertical-align:top;color:var(--ink-2)}
+table.data tr:last-child td{border-bottom:0}
+table.data tbody tr{transition:background .15s}
+table.data tbody tr:hover{background:rgba(255,255,255,.85)}
+table.data td:first-child{font-weight:600;color:var(--ink)}
+
+/* ---------- pasos ---------- */
+.steps{list-style:none;margin:1.7rem 0;padding:0;display:grid;gap:.85rem}
+.step{
+  display:flex;gap:1.1rem;align-items:flex-start;
+  background:var(--glass);border:1px solid var(--glass-brd);border-radius:var(--r-md);
+  padding:1.1rem 1.25rem;
+  -webkit-backdrop-filter:saturate(1.5) blur(14px);backdrop-filter:saturate(1.5) blur(14px);
+  box-shadow:0 14px 34px -26px rgba(29,29,31,.3);
+  transition:transform .22s cubic-bezier(.22,1,.36,1),box-shadow .22s;
+}
+.step:hover{transform:translateX(4px);box-shadow:0 18px 40px -26px rgba(29,29,31,.4)}
+.step-n{
+  font-family:var(--mono);font-size:.78rem;font-weight:600;color:#fff;
+  background:linear-gradient(135deg,var(--tint),color-mix(in srgb,var(--tint) 60%,#5856D6));
+  border-radius:50%;
+  width:2.25rem;height:2.25rem;display:inline-flex;align-items:center;justify-content:center;
+  flex:none;margin-top:.1rem;box-shadow:0 6px 14px -6px var(--tint);
+}
+@supports not (color:color-mix(in srgb,red 50%,blue)){.step-n{background:var(--tint)}}
+.step-body p{margin:.15rem 0 0;font-size:.95rem;color:var(--ink-2)}
+
+/* ---------- diagramas ---------- */
+.diagram{
+  margin:1.8rem 0;background:var(--glass);border:1px solid var(--glass-brd);border-radius:var(--r-lg);
+  padding:1.3rem 1.3rem .9rem;overflow-x:auto;
+  -webkit-backdrop-filter:saturate(1.5) blur(14px);backdrop-filter:saturate(1.5) blur(14px);
+  box-shadow:var(--shadow);
+}
+.diagram svg{display:block;width:100%;height:auto;min-width:560px}
+.diagram figcaption{
+  font-family:var(--mono);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--muted);padding:.75rem .2rem 0;border-top:1px solid var(--line);margin-top:.95rem;
+}
+
+/* ---------- recursos ---------- */
+.resource{
+  margin:1.8rem 0;padding:1.4rem 1.5rem 1.2rem;
+  background:var(--glass);border:1px solid var(--glass-brd);border-radius:var(--r-lg);
+  -webkit-backdrop-filter:saturate(1.5) blur(14px);backdrop-filter:saturate(1.5) blur(14px);
+  box-shadow:var(--shadow);
+  transition:transform .22s cubic-bezier(.22,1,.36,1),box-shadow .22s;
+}
+.resource:hover{transform:translateY(-3px);box-shadow:0 26px 54px -30px rgba(29,29,31,.45)}
+.resource-head h3{margin:0 0 .25rem;font-size:1.18rem}
+.resource-when{margin:0 0 .4rem;font-size:.93rem;color:var(--muted)}
+.resource .prompt-box{margin:1rem 0 .8rem}
+.resource-tip{
+  margin:0;font-size:.88rem;color:var(--ink-2);
+  border-left:3px solid var(--tint);padding:.1rem 0 .1rem .85rem;
+}
+
+/* ---------- quiz ---------- */
+.quiz{
+  margin:2.6rem 0 .4rem;border:1px solid var(--glass-brd);border-radius:var(--r-lg);
+  background:var(--glass);overflow:hidden;
+  -webkit-backdrop-filter:saturate(1.6) blur(18px);backdrop-filter:saturate(1.6) blur(18px);
+  box-shadow:var(--shadow);
+}
+.quiz-head{
+  padding:1.4rem 1.6rem 1.2rem;border-bottom:1px solid var(--line);
+  background:linear-gradient(135deg,color-mix(in srgb,var(--tint) 10%,#fff),rgba(255,255,255,.6));
+}
+@supports not (color:color-mix(in srgb,red 50%,blue)){.quiz-head{background:rgba(255,255,255,.7)}}
+.quiz-tag{
+  display:inline-block;font-family:var(--mono);font-size:.62rem;font-weight:600;
+  letter-spacing:.2em;text-transform:uppercase;color:#fff;background:var(--tint);
+  border-radius:999px;padding:.28rem .8rem;margin-bottom:.6rem;
+  box-shadow:0 6px 14px -6px var(--tint);
+}
+.quiz-head h3{margin:0 0 .25rem;font-size:1.35rem;font-weight:700;letter-spacing:-.015em}
+.quiz-sub{margin:0;font-size:.92rem;color:var(--muted)}
+.quiz-q{padding:1.3rem 1.6rem;border-bottom:1px solid var(--line)}
+.quiz-q:last-of-type{border-bottom:0}
+.quiz-question{margin:0 0 .9rem;font-weight:650;font-size:1.02rem;letter-spacing:-.01em}
+.quiz-opts{display:grid;gap:.6rem}
+.quiz-opt{
+  font-family:var(--sans);font-size:.95rem;text-align:left;line-height:1.5;
+  padding:.78rem 1.05rem .78rem 2.7rem;border:1px solid var(--line-2);border-radius:var(--r-sm);
+  background:rgba(255,255,255,.8);color:var(--ink-2);cursor:pointer;position:relative;
+  transition:border-color .18s,background .18s,transform .14s cubic-bezier(.22,1,.36,1),box-shadow .18s;
+}
+.quiz-opt::before{
+  content:"";position:absolute;left:1rem;top:50%;transform:translateY(-50%);
+  width:15px;height:15px;border:1.5px solid var(--line-2);border-radius:50%;background:#fff;
+  transition:border-color .18s,background .18s,box-shadow .18s;
+}
+.quiz-opt:hover:not(:disabled){border-color:var(--tint);background:#fff;transform:translateY(-1px);box-shadow:0 8px 20px -12px rgba(29,29,31,.35)}
+.quiz-opt:hover:not(:disabled)::before{border-color:var(--tint)}
+.quiz-opt:active:not(:disabled){transform:scale(.99)}
+.quiz-opt:disabled{cursor:default;opacity:.85}
+.quiz-opt.is-correct,.quiz-opt.is-wrong{padding-right:7.5rem;opacity:1}
+.quiz-opt.is-correct{border-color:var(--ok);background:var(--ok-bg);color:var(--ink)}
+.quiz-opt.is-correct::before{background:var(--ok);border-color:var(--ok);box-shadow:0 0 0 3px rgba(36,138,61,.2)}
+.quiz-opt.is-correct::after{
+  content:"Correcta ✓";font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ok);position:absolute;right:.95rem;top:50%;transform:translateY(-50%);font-weight:600;
+}
+.quiz-opt.is-wrong{border-color:var(--err);background:var(--err-bg);color:var(--ink);animation:shake .4s cubic-bezier(.36,.07,.19,.97)}
+.quiz-opt.is-wrong::before{background:var(--err);border-color:var(--err);box-shadow:0 0 0 3px rgba(215,0,21,.15)}
+.quiz-opt.is-wrong::after{
+  content:"Tu respuesta";font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--err);position:absolute;right:.95rem;top:50%;transform:translateY(-50%);font-weight:600;
+}
+@keyframes shake{
+  10%,90%{transform:translateX(-1px)}20%,80%{transform:translateX(2px)}
+  30%,50%,70%{transform:translateX(-3px)}40%,60%{transform:translateX(3px)}
+}
+.quiz-opt.is-reveal{border-color:var(--ok);background:var(--ok-bg);opacity:1}
+.quiz-opt.is-reveal::before{background:var(--ok);border-color:var(--ok)}
+.quiz-explain{
+  margin:.9rem 0 0;font-size:.9rem;color:var(--ink-2);
+  border-left:3px solid var(--tint);padding:.15rem 0 .15rem .95rem;
+  animation:fadeup .4s ease both;
+}
+@keyframes fadeup{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.quiz-score{
+  padding:1.15rem 1.6rem;background:rgba(29,29,31,.96);color:#E8EAED;
+  display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;
+  animation:fadeup .45s ease both;
+}
+.quiz-score .qs-txt{font-family:var(--mono);font-size:.8rem;letter-spacing:.06em}
+.quiz-score .qs-txt b{color:#7DD3FC}
+.quiz-retry{
+  font-family:var(--mono);font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;
+  background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.25);
+  border-radius:999px;padding:.5rem 1.05rem;cursor:pointer;transition:background .18s,transform .12s;
+}
+.quiz-retry:hover{background:rgba(255,255,255,.28)}
+.quiz-retry:active{transform:scale(.95)}
+
+/* ---------- footer ---------- */
+.footer{
+  margin-top:3rem;background:rgba(29,29,31,.97);color:#9BA2AD;
+  padding:2.6rem 0 2.8rem;
+}
+.footer .wrap{display:flex;align-items:center;gap:1.1rem;flex-wrap:wrap}
+.footer p{margin:0;font-family:var(--mono);font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;line-height:1.9}
+.footer p b{color:#fff;font-weight:600}
+
+/* ---------- reveal ---------- */
+.js .reveal{opacity:0;transform:translateY(22px) scale(.985);transition:opacity .7s ease,transform .7s cubic-bezier(.22,1,.36,1)}
+.js .reveal.in{opacity:1;transform:none}
+
+/* ---------- responsive ---------- */
+@media (max-width:680px){
+  body{font-size:1rem}
+  .topbar .doc-tag{display:none}
+  .def-grid{grid-template-columns:1fr}
+  .meta th{width:118px;font-size:.6rem}
+  .meta th,.meta td{padding:.62rem .85rem}
+  .toc .chk{display:none}
+  .step{gap:.85rem;padding:.95rem 1rem}
+  table.data{min-width:0}
+  table.data thead{position:absolute;left:-9999px}
+  table.data tr{display:block;border-bottom:1px solid var(--line-2);padding:.4rem 0}
+  table.data tr:last-child{border-bottom:0}
+  table.data td{display:block;border-bottom:0;padding:.35rem 1.05rem}
+  table.data td::before{
+    content:attr(data-th);display:block;font-family:var(--mono);font-size:.6rem;
+    letter-spacing:.14em;text-transform:uppercase;color:var(--tint-ink);margin-bottom:.15rem;font-weight:600;
+  }
+  .quiz-opt.is-correct::after,.quiz-opt.is-wrong::after{content:none}
+  .quiz-opt.is-correct,.quiz-opt.is-wrong{padding-right:1.05rem}
+  .orb-a{width:220px;height:220px}
+  .orb-b{width:180px;height:180px}
+}
+
+/* ---------- impresión ---------- */
+@media print{
+  :root{--paper:#fff;--paper-2:#fff;--glass:#fff;--glass-brd:#ddd}
+  body{background:#fff;font-size:10.5pt;color:#000}
+  body::before{display:none}
+  .topbar,.progress,.quiz-retry,.skip,.copy-btn,.orb{display:none!important}
+  main{padding-top:0}
+  .js .reveal{opacity:1!important;transform:none!important;transition:none}
+  .sec{padding:1.6rem 0}
+  .cover{padding:1rem 0 1.6rem}
+  .cover h1 em{-webkit-text-fill-color:#000;color:#000;background:none}
+  .def,.note,.caution,.prompt-box,.step,.quiz-q,.diagram,.table-wrap,.resource{page-break-inside:avoid;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none}
+  .prompt-box pre{background:#f2f2f2;color:#000}
+  .prompt-box figcaption{background:#000;color:#fff}
+  .quiz{box-shadow:none}
+  .quiz-explain{display:block!important}
+  .quiz-explain[hidden]{display:block!important}
+  .quiz-opt[data-correct]{border-color:#000;font-weight:600}
+  .quiz-opt[data-correct]::after{content:"✓";position:absolute;right:.9rem;color:#000}
+  .quiz-score{display:none}
+  .footer{background:#fff;color:#000;border-top:1pt solid #000}
+  .footer p b{color:#000}
+  .toc ol{box-shadow:none}
+  .toc a{padding:.3rem .2rem}
+  a{color:#000}
+}
+
+</style>
+</head>
+<body>
+<a class="skip" href="#contenido">Saltar al contenido</a>
+
+<header class="topbar" role="banner">
+  <a class="brand" href="#top" aria-label="0800 — inicio del documento">
+    <span>0800 · Formación interna</span>
+  </a>
+  <span class="doc-tag">Onboarding · v1.1 · Julio 2026</span>
+</header>
+<div class="progress" aria-hidden="true"><i id="progress-bar"></i></div>
+
+<main id="top">
+  <!-- ============ PORTADA ============ -->
+  <section class="cover wrap" aria-label="Portada">
+    <div class="orb orb-a" aria-hidden="true"></div>
+    <div class="orb orb-b" aria-hidden="true"></div>
+    <p class="kicker reveal">0800 · Documento de capacitación · Onboarding</p>
+    <h1 class="reveal">Claude como <em>sistema de trabajo</em></h1>
+    <p class="lede reveal">Manual operativo para dirigir proyectos, operar la tienda y producir contenido con Claude: Chat + Cowork, Claude Code y conexiones MCP (Shopify, Higgsfield, Magnific).</p>
+    <div class="meta reveal">
+      <table>
+        <tbody>
+          <tr><th scope="row">Destinatario</th><td>Roque — fundador de 0800. Perfil: artista joyero, gestión de marca y trayectoria en marketing.</td></tr>
+          <tr><th scope="row">Preparado por</th><td>Nicolás Minahk · 33Brains</td></tr>
+          <tr><th scope="row">Versión</th><td>1.1 — Julio 2026</td></tr>
+          <tr><th scope="row">Objeto</th><td>Aprender a operar Claude como equipo de ejecución para negocios digitales y comercio electrónico: desarrollo de ideas, venta de proyectos, operación de la tienda Shopify y producción de contenido.</td></tr>
+          <tr><th scope="row">Requisitos previos</th><td>Ninguno. No requiere conocimientos de programación.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============ ÍNDICE ============ -->
+  <nav class="toc wrap" aria-label="Índice del documento">
+    <h2>Índice</h2>
+    <ol>
+      <li><a href="#s00"><span class="n">00</span><span class="t">Objeto y alcance</span><span class="dots"></span></a></li>
+      <li><a href="#s01"><span class="n">01</span><span class="t">Marco conceptual mínimo</span><span class="dots"></span><span class="chk">Checkpoint</span></a></li>
+      <li><a href="#s02"><span class="n">02</span><span class="t">La plataforma Claude hoy</span><span class="dots"></span></a></li>
+      <li><a href="#s03"><span class="n">03</span><span class="t">Vibe coding aplicado a negocio</span><span class="dots"></span><span class="chk">Checkpoint</span></a></li>
+      <li><a href="#s04"><span class="n">04</span><span class="t">Flujo de trabajo y trazabilidad</span><span class="dots"></span></a></li>
+      <li><a href="#s05"><span class="n">05</span><span class="t">MCP Shopify: operar la tienda</span><span class="dots"></span><span class="chk">Checkpoint</span></a></li>
+      <li><a href="#s06"><span class="n">06</span><span class="t">MCP Higgsfield y Magnific: producción de contenido</span><span class="dots"></span></a></li>
+      <li class="sub"><a href="#s06-1"><span class="n">06.1</span><span class="t">Reglas de persistencia de marca</span><span class="dots"></span><span class="chk">Checkpoint</span></a></li>
+      <li><a href="#s07"><span class="n">07</span><span class="t">Aplicación a gestión, ideas y venta de proyectos</span><span class="dots"></span></a></li>
+      <li><a href="#s08"><span class="n">08</span><span class="t">Buenas prácticas, control y límites</span><span class="dots"></span><span class="chk">Checkpoint</span></a></li>
+      <li><a href="#s09"><span class="n">09</span><span class="t">Plan de primeros pasos (2 semanas)</span><span class="dots"></span></a></li>
+      <li><a href="#s10"><span class="n">10</span><span class="t">Glosario</span><span class="dots"></span></a></li>
+      <li><a href="#s11"><span class="n">11</span><span class="t">Caja de herramientas: plantillas listas para usar</span><span class="dots"></span><span class="chk">Recursos</span></a></li>
+    </ol>
+  </nav>
+
+  <div id="contenido" class="wrap">
+<section class="sec" id="s00" aria-labelledby="h-s00">
+  <header class="sec-head reveal">
+    <span class="sec-mark">Sección 00</span>
+    <h2 id="h-s00">Objeto y alcance</h2>
+    <p class="sec-lede">Qué es este documento, qué no es, y qué se espera de vos al terminarlo.</p>
+  </header>
+  <div class="prose reveal">
+    <p>Este documento es una guía operativa: explica cómo Roque usa Claude —Chat y Cowork unificados, y Claude Code— para ejecutar el trabajo diario de 0800. Contenido de campañas, atención del e-commerce en Shopify, análisis de datos, organización de archivos. No es teoría general sobre inteligencia artificial: es un manual de instrucciones para tareas concretas de la marca.</p>
+    <p>No es un curso de programación. No es un manual de marketing ni de gestión de marca: Roque ya sabe dirigir 0800, y ese conocimiento no se sustituye acá. Tampoco es documentación exhaustiva de cada función de producto disponible; cubre lo que hace falta para operar con criterio, no cada opción de menú.</p>
+    <p>La idea central es simple. Roque ya sabe dirigir una marca; este documento le agrega un equipo de ejecución que trabaja bajo su dirección. Redactar, ordenar, revisar stock, cruzar datos: eso lo puede hacer Claude. Decidir qué se publica, qué se le dice a un cliente o qué dato se usa para fijar un precio sigue siendo una decisión humana. La responsabilidad no se delega.</p>
+  </div>
+  <aside class="note reveal">
+    <span class="note-label">Cómo leer este documento</span>
+    <p>La primera vez, de corrido, en el orden en que está escrito. Después, como referencia: se busca la sección por el índice cuando aparece una tarea puntual. Los bloques marcados como "Checkpoint" son autoevaluaciones opcionales de opción múltiple, con corrección inmediata al elegir una respuesta; no se envían ni quedan registradas en ningún lado.</p>
+  </aside>
+</section>
+<section class="sec" id="s01" aria-labelledby="h-s01">
+  <header class="sec-head reveal">
+    <span class="sec-mark">Sección 01</span>
+    <h2 id="h-s01">Marco conceptual mínimo</h2>
+    <p class="sec-lede">Siete términos. Alcanza con esto para operar el resto del documento con criterio.</p>
+  </header>
+  <div class="prose reveal">
+    <p>No hace falta entender cómo funciona un modelo por dentro. Hace falta manejar estos siete términos para pedir las cosas bien y detectar cuándo una respuesta hay que revisarla antes de usarla.</p>
+  </div>
+  <div class="def-grid reveal">
+    <div class="def">
+      <span class="def-term">IA generativa</span>
+      <p>Sistema que produce contenido nuevo —texto, imagen, audio— a partir de una instrucción, en lugar de solo buscar o clasificar información existente. Es la categoría a la que pertenece Claude. En 0800 es lo que arma variantes de una descripción de producto o el guion de un reel a partir de una idea suelta.</p>
+    </div>
+    <div class="def">
+      <span class="def-term">IA agéntica</span>
+      <p>Un modelo que no solo redacta, sino que ejecuta una tarea de varios pasos por su cuenta: busca información, la cruza, toma una decisión intermedia y entrega un resultado. La diferencia con pedir un texto es la diferencia entre "escribime un mensaje sobre reposición de stock" y "revisá qué productos de la colección Cadenas tienen menos de tres unidades y armame la lista de reposición". Lo segundo es agéntico.</p>
+    </div>
+    <div class="def">
+      <span class="def-term">Modelo / LLM</span>
+      <p>LLM es la sigla de <em>large language model</em>, modelo de lenguaje grande: el motor entrenado con enormes volúmenes de texto que predice y genera respuestas coherentes. Claude es un LLM. Es el mismo modelo el que responde en el chat, el que trabaja en Cowork y el que corre dentro de Claude Code; cambia el entorno, no el criterio con el que hay que tratarlo.</p>
+    </div>
+    <div class="def">
+      <span class="def-term">Prompt</span>
+      <p>La instrucción que se le escribe al modelo para pedirle algo. Un prompt más largo no es un prompt mejor: lo que mejora el resultado es que sea específico y tenga el contexto necesario. Para 0800, un buen prompt nombra el producto, el tono de marca y el objetivo del texto, no solo el tema.</p>
+    </div>
+    <div class="def">
+      <span class="def-term">Contexto</span>
+      <p>Toda la información disponible para el modelo en el momento de responder: lo que se escribió antes en la conversación, los archivos adjuntos, las instrucciones fijas de un Proyecto. Por eso conviene armar un Proyecto de 0800 con las instrucciones de marca cargadas una sola vez: mejora todas las respuestas que se pidan ahí adentro, sin tener que repetir el contexto en cada mensaje.</p>
+    </div>
+    <div class="def">
+      <span class="def-term">Alucinación</span>
+      <p>Una respuesta con apariencia de dato cierto que en realidad es incorrecta o directamente inventada por el modelo. No es un error de tipeo ni una falla técnica: el modelo genera algo plausible aunque no sea verdad. Por eso ningún precio, stock o dato de producto que devuelva Claude se usa sin verificarlo antes contra Shopify.</p>
+    </div>
+    <div class="def">
+      <span class="def-term">MCP</span>
+      <p><em>Model Context Protocol.</em> El protocolo que permite a Claude conectarse y operar directamente sobre herramientas externas, en lugar de que alguien copie y pegue datos a mano. No es un modelo ni una versión más potente de Claude: es el conector. Con un MCP de Shopify conectado, Claude puede consultar el stock real de la tienda de 0800 en vez de trabajar con lo que se le cuente de memoria.</p>
+    </div>
+  </div>
+  <div class="quiz reveal" data-quiz>
+    <div class="quiz-head">
+      <span class="quiz-tag">Checkpoint</span>
+      <h3 id="quiz-s01-t">Validá lo aprendido</h3>
+      <p class="quiz-sub">Tres preguntas sobre los términos de esta sección.</p>
+    </div>
+    <div class="quiz-q" data-q>
+      <p class="quiz-question">¿Qué es una alucinación en el contexto de un modelo como Claude?</p>
+      <div class="quiz-opts" role="group" aria-label="Opciones de respuesta">
+        <button class="quiz-opt" type="button">Un error de tipeo que el modelo corrige solo al escribir</button>
+        <button class="quiz-opt" type="button" data-correct>Una respuesta con apariencia de dato cierto que en realidad es incorrecta o inventada</button>
+        <button class="quiz-opt" type="button">Una falla técnica que hace que el modelo se desconecte a mitad de tarea</button>
+      </div>
+      <p class="quiz-explain" hidden>No es un error de escritura ni una falla del sistema: el modelo puede generar un dato plausible que es falso. Por eso todo dato de stock o precio se verifica antes de usarlo.</p>
+    </div>
+    <div class="quiz-q" data-q>
+      <p class="quiz-question">¿Cuál de estas afirmaciones sobre los prompts es correcta?</p>
+      <div class="quiz-opts" role="group" aria-label="Opciones de respuesta">
+        <button class="quiz-opt" type="button" data-correct>Un prompt más largo no es necesariamente mejor: importa que sea específico y tenga el contexto necesario</button>
+        <button class="quiz-opt" type="button">Cuanto más largo el prompt, mejor la respuesta, porque el modelo tiene más información para trabajar</button>
+        <button class="quiz-opt" type="button">El prompt ideal es siempre una sola palabra clave, sin ningún detalle adicional</button>
+      </div>
+      <p class="quiz-explain" hidden>La extensión no es el factor que mejora un prompt. Un prompt específico, con el contexto de marca y el objetivo claros, da mejores resultados que uno simplemente largo.</p>
+    </div>
+    <div class="quiz-q" data-q>
+      <p class="quiz-question">¿Qué es el MCP (Model Context Protocol)?</p>
+      <div class="quiz-opts" role="group" aria-label="Opciones de respuesta">
+        <button class="quiz-opt" type="button">Una versión más nueva y más potente del modelo de lenguaje</button>
+        <button class="quiz-opt" type="button">Un tipo de prompt especial reservado para tareas complejas</button>
+        <button class="quiz-opt" type="button" data-correct>Un protocolo que permite a Claude conectarse y operar sobre herramientas externas, como la tienda de Shopify</button>
+      </div>
+      <p class="quiz-explain" hidden>El MCP no es un modelo: es el conector que le permite a Claude consultar y operar sobre sistemas externos en vez de depender de que alguien le pase los datos a mano.</p>
+    </div>
+    <div class="quiz-score" data-score hidden></div>
+  </div>
+</section>
+<section class="sec" id="s02" aria-labelledby="h-s02">
+  <header class="sec-head reveal">
+    <span class="sec-mark">Sección 02</span>
+    <h2 id="h-s02">La plataforma Claude hoy</h2>
+    <p class="sec-lede">Dos entornos y un conjunto de capacidades transversales que los atraviesan a ambos.</p>
+  </header>
+  <div class="prose reveal">
+    <p>Toda la plataforma se organiza en dos entornos. Uno es Claude, el espacio unificado de chat y trabajo agéntico. El otro es Claude Code, el entorno para desarrollo real. Encima de los dos corren capacidades transversales —Proyectos, Skills, Conectores/MCP y memoria— que no son un tercer entorno, sino recursos que ambos usan por igual.</p>
+  </div>
+  <figure class="diagram reveal">
+    <svg viewBox="0 0 720 320" role="img" aria-label="Mapa de la plataforma Claude: dos cajas arriba, CLAUDE CHAT MAS COWORK y CLAUDE CODE, conectadas por una línea troncal a una banda inferior de cuatro capacidades transversales, Proyectos, Skills, Conectores MCP y Memoria">
+      <defs>
+        <marker id="s02-arrow" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+          <polygon points="0,0 8,4 0,8" fill="var(--steel-2)"></polygon>
+        </marker>
+      </defs>
+
+      <!-- Caja Claude (Chat + Cowork) -->
+      <rect x="40" y="30" width="290" height="112" rx="3" fill="var(--card)" stroke="var(--line-2)" stroke-width="1.5"></rect>
+      <text x="185" y="52" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="13" letter-spacing="1" fill="var(--ink)">CLAUDE (CHAT + COWORK)</text>
+      <line x1="58" y1="62" x2="312" y2="62" stroke="var(--line)" stroke-width="1"></line>
+      <text x="185" y="84" text-anchor="middle" font-family="'IBM Plex Sans'" font-size="11" fill="var(--ink-2)">Conversaciones, Proyectos y Artefactos</text>
+      <text x="185" y="104" text-anchor="middle" font-family="'IBM Plex Sans'" font-size="11" fill="var(--ink-2)">Cowork: modo agéntico multi-paso</text>
+      <text x="185" y="124" text-anchor="middle" font-family="'IBM Plex Sans'" font-size="11" fill="var(--ink-2)">Sesiones remotas, se retoman desde el móvil</text>
+
+      <!-- Caja Claude Code -->
+      <rect x="390" y="30" width="290" height="112" rx="3" fill="var(--card)" stroke="var(--line-2)" stroke-width="1.5"></rect>
+      <text x="535" y="52" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="13" letter-spacing="1" fill="var(--ink)">CLAUDE CODE</text>
+      <line x1="408" y1="62" x2="662" y2="62" stroke="var(--line)" stroke-width="1"></line>
+      <text x="535" y="84" text-anchor="middle" font-family="'IBM Plex Sans'" font-size="11" fill="var(--ink-2)">Terminal, app de escritorio o móvil</text>
+      <text x="535" y="104" text-anchor="middle" font-family="'IBM Plex Sans'" font-size="11" fill="var(--ink-2)">Lee/escribe archivos, ejecuta comandos</text>
+      <text x="535" y="124" text-anchor="middle" font-family="'IBM Plex Sans'" font-size="11" fill="var(--ink-2)">Gestiona repositorios Git y despliega</text>
+
+      <!-- Troncal de conexión -->
+      <line x1="185" y1="142" x2="185" y2="168" stroke="var(--steel-2)" stroke-width="1.5"></line>
+      <line x1="535" y1="142" x2="535" y2="168" stroke="var(--steel-2)" stroke-width="1.5"></line>
+      <line x1="40" y1="168" x2="680" y2="168" stroke="var(--steel-2)" stroke-width="1.5"></line>
+      <line x1="120" y1="168" x2="120" y2="196" stroke="var(--steel-2)" stroke-width="1.5" marker-end="url(#s02-arrow)"></line>
+      <line x1="280" y1="168" x2="280" y2="196" stroke="var(--steel-2)" stroke-width="1.5" marker-end="url(#s02-arrow)"></line>
+      <line x1="440" y1="168" x2="440" y2="196" stroke="var(--steel-2)" stroke-width="1.5" marker-end="url(#s02-arrow)"></line>
+      <line x1="600" y1="168" x2="600" y2="196" stroke="var(--steel-2)" stroke-width="1.5" marker-end="url(#s02-arrow)"></line>
+
+      <!-- Banda transversales -->
+      <rect x="40" y="200" width="640" height="90" rx="3" fill="var(--paper-2)" stroke="var(--line)" stroke-width="1"></rect>
+      <text x="360" y="218" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="12" letter-spacing="1" fill="var(--ink-2)">TRANSVERSALES</text>
+
+      <rect x="52" y="230" width="136" height="48" rx="3" fill="var(--card)" stroke="var(--line-2)" stroke-width="1"></rect>
+      <text x="120" y="258" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="11" letter-spacing="1" fill="var(--ink)">PROYECTOS</text>
+
+      <rect x="212" y="230" width="136" height="48" rx="3" fill="var(--card)" stroke="var(--line-2)" stroke-width="1"></rect>
+      <text x="280" y="258" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="11" letter-spacing="1" fill="var(--ink)">SKILLS</text>
+
+      <rect x="372" y="230" width="136" height="48" rx="3" fill="var(--card)" stroke="var(--line-2)" stroke-width="1"></rect>
+      <text x="440" y="252" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="11" letter-spacing="1" fill="var(--ink)">CONECTORES</text>
+      <text x="440" y="266" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="11" letter-spacing="1" fill="var(--ink)">/ MCP</text>
+
+      <rect x="532" y="230" width="136" height="48" rx="3" fill="var(--card)" stroke="var(--line-2)" stroke-width="1"></rect>
+      <text x="600" y="258" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="11" letter-spacing="1" fill="var(--ink)">MEMORIA</text>
+    </svg>
+    <figcaption>Figura 1. Los dos entornos de la plataforma —Claude unificado y Claude Code— y las cuatro capacidades transversales que operan sobre ambos.</figcaption>
+  </figure>
+
+  <div class="table-wrap reveal">
+    <table class="data">
+      <thead>
+        <tr>
+          <th scope="col">Componente</th>
+          <th scope="col">Qué es</th>
+          <th scope="col">Para qué lo usa 0800</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td data-th="Componente">Claude (Chat + Cowork)</td>
+          <td data-th="Qué es">Espacio único de conversación, con Cowork como modo agéntico para tareas de varios pasos, invocado desde la misma ventana.</td>
+          <td data-th="Para qué lo usa 0800">Redactar la campaña de un lanzamiento, o pedirle a Cowork que reorganice y renombre doscientas fotos de producto mientras Roque atiende otra cosa.</td>
+        </tr>
+        <tr>
+          <td data-th="Componente">Claude Code</td>
+          <td data-th="Qué es">Entorno de desarrollo real: terminal, app de escritorio o móvil. Lee y escribe archivos, ejecuta comandos, gestiona Git y despliega.</td>
+          <td data-th="Para qué lo usa 0800">Construir y publicar la landing de un lanzamiento sin depender de un desarrollador externo para cada campaña.</td>
+        </tr>
+        <tr>
+          <td data-th="Componente">Proyectos</td>
+          <td data-th="Qué es">Contexto agrupado por tema o cliente, con instrucciones propias que no hay que repetir en cada mensaje.</td>
+          <td data-th="Para qué lo usa 0800">Un Proyecto "Colección Invierno" con el brief, las fotos y el tono de marca ya cargados de entrada.</td>
+        </tr>
+        <tr>
+          <td data-th="Componente">Skills</td>
+          <td data-th="Qué es">Capacidades preparadas para formatos concretos: documentos, planillas, presentaciones.</td>
+          <td data-th="Para qué lo usa 0800">Armar el informe mensual de ventas en una planilla con el formato que ya usa 0800.</td>
+        </tr>
+        <tr>
+          <td data-th="Componente">Conectores/MCP</td>
+          <td data-th="Qué es">Integraciones con herramientas externas: permiten consultar y operar sobre esas herramientas desde la conversación.</td>
+          <td data-th="Para qué lo usa 0800">Consultar el stock real de la tienda Shopify sin salir de la conversación con Claude.</td>
+        </tr>
+        <tr>
+          <td data-th="Componente">Memoria</td>
+          <td data-th="Qué es">Claude retiene contexto útil entre conversaciones, sin que haga falta repetirlo cada vez.</td>
+          <td data-th="Para qué lo usa 0800">No tener que volver a explicar, en cada conversación nueva, qué es 0800 y a quién le habla.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Un cambio reciente: de tres espacios a dos</h3>
+  <div class="prose reveal">
+    <p>Hasta hace poco, Chat, Cowork y Claude Code eran tres espacios separados, cada uno con su propia ventana. Desde julio de 2026 quedan dos: Cowork dejó de ser un espacio aparte y pasó a vivir dentro de la misma ventana de chat, se invoca desde ahí. Claude Code sigue siendo el segundo entorno, sin cambios en esa separación.</p>
+  </div>
+  <aside class="note reveal">
+    <span class="note-label">Nota</span>
+    <p>Material o tutoriales anteriores a julio de 2026 pueden mostrar todavía la estructura vieja, con Cowork como aplicación o pestaña separada del chat. Si un video o una guía muestra eso, no está mal hecho: quedó desactualizado por el cambio de estructura, no por un error de quien lo armó.</p>
+  </aside>
+
+  <h3>Conector directo vs. MCP</h3>
+  <div class="prose reveal">
+    <p>Un conector directo es una integración ya empaquetada, que se activa desde la configuración de Claude con un paso simple y queda mantenida por quien la ofrece. Un MCP —<em>Model Context Protocol</em>— es un protocolo abierto: permite conectar prácticamente cualquier herramienta, incluidas las propias de 0800, siempre que alguien la exponga con ese protocolo.</p>
+    <p>Para el uso diario de 0800 la diferencia entre uno y otro es más técnica que práctica: en los dos casos el resultado es el mismo, Claude puede consultar y operar sobre esa herramienta externa dentro de la conversación. Lo que cambia es quién la mantiene y cómo se configuró, no lo que Roque nota al usarla.</p>
+  </div>
+</section>
+<section class="sec" id="s03" aria-labelledby="h-s03">
+  <header class="sec-head reveal">
+    <span class="sec-mark">Sección 03</span>
+    <h2 id="h-s03">Vibe coding aplicado a negocio</h2>
+    <p class="sec-lede">Dirigir desarrollo en castellano, sin escribir código, sin dejar de revisar el resultado.</p>
+  </header>
+  <div class="prose reveal">
+    <p>Vibe coding es dirigir el desarrollo de software describiendo en castellano el resultado esperado, en lugar de escribir el código a mano. El sistema escribe el código; la persona revisa el resultado funcionando —una página, una app, un prototipo— y pide los ajustes que hagan falta, en el mismo lenguaje llano con el que lo pidió la primera vez.</p>
+  </div>
+  <div class="prose reveal">
+    <p>La distribución de responsabilidades no cambia: Claude ejecuta, la persona define el objetivo, revisa el resultado y decide qué se publica. La analogía más útil es la de un colaborador junior rapidísimo, con una memoria enorme y sin ego: no se ofende si se le pide rehacer algo tres veces, pero tampoco sabe solo qué conviene lanzar. Necesita dirección clara al empezar y control de calidad al terminar.</p>
+  </div>
+
+  <div class="table-wrap reveal">
+    <table class="data">
+      <thead>
+        <tr>
+          <th scope="col">Aporta</th>
+          <th scope="col">No aporta</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td data-th="Aporta">Velocidad de ejecución: una landing funcionando en minutos, no en días.</td>
+          <td data-th="No aporta">Criterio de negocio: qué lanzamiento tiene sentido para 0800 y cuándo.</td>
+        </tr>
+        <tr>
+          <td data-th="Aporta">Conocimiento técnico amplio de patrones de desarrollo y buenas prácticas.</td>
+          <td data-th="No aporta">Conocimiento del cliente real de 0800, de su historia y su comunidad.</td>
+        </tr>
+        <tr>
+          <td data-th="Aporta">Iteración barata: probar una variante distinta cuesta pedirlo de nuevo.</td>
+          <td data-th="No aporta">La decisión final sobre qué versión se publica.</td>
+        </tr>
+        <tr>
+          <td data-th="Aporta">Disponibilidad inmediata, sin agenda ni tiempos de agencia externa.</td>
+          <td data-th="No aporta">La responsabilidad sobre lo que queda publicado con el nombre de 0800.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <ol class="steps reveal">
+    <li class="step">
+      <span class="step-n" aria-hidden="true">01</span>
+      <div class="step-body"><p class="step-t">Landings de campaña</p><p>Una landing por lanzamiento, sin depender de una agencia para cada campaña puntual.</p></div>
+    </li>
+    <li class="step">
+      <span class="step-n" aria-hidden="true">02</span>
+      <div class="step-body"><p class="step-t">Apps de ideas propias</p><p>Prototipar una idea de producto digital propia en días, no en meses de desarrollo tercerizado.</p></div>
+    </li>
+    <li class="step">
+      <span class="step-n" aria-hidden="true">03</span>
+      <div class="step-body"><p class="step-t">Prototipos para vender proyectos</p><p>Llegar a una reunión con una demo funcionando en vez de un PDF de propuesta.</p></div>
+    </li>
+  </ol>
+
+  <figure class="prompt-box reveal">
+    <figcaption>Ejemplo — landing de lanzamiento</figcaption>
+    <pre>Necesito una landing para el lanzamiento de la colección
+Nocturna: cadenas de plata gruesas, estética underground,
+fondo oscuro. Poné un countdown hasta el viernes a las 20h
+y un formulario para anotarse a la lista de espera con mail.
+Mostrame el resultado funcionando antes de tocar nada
+del sitio principal.</pre>
+  </figure>
+
+  <div class="quiz reveal" data-quiz>
+    <div class="quiz-head">
+      <span class="quiz-tag">Checkpoint</span>
+      <h3 id="quiz-s03-t">Validá lo aprendido</h3>
+      <p class="quiz-sub">Tres preguntas sobre la plataforma y sobre vibe coding.</p>
+    </div>
+    <div class="quiz-q" data-q>
+      <p class="quiz-question">Después del cambio de julio de 2026, ¿dónde vive Cowork?</p>
+      <div class="quiz-opts" role="group" aria-label="Opciones de respuesta">
+        <button class="quiz-opt" type="button">En una aplicación aparte, independiente del chat</button>
+        <button class="quiz-opt" type="button" data-correct>Dentro de la misma ventana de Claude, se invoca desde el chat</button>
+        <button class="quiz-opt" type="button">Solo dentro de Claude Code, como un modo de terminal</button>
+      </div>
+      <p class="quiz-explain" hidden>Antes eran tres espacios separados —Chat, Cowork y Code—. Desde julio de 2026 son dos entornos: Claude, donde Cowork se invoca desde la misma ventana de chat, y Claude Code.</p>
+    </div>
+    <div class="quiz-q" data-q>
+      <p class="quiz-question">En vibe coding aplicado a un negocio como 0800, ¿qué de esto NO aporta Claude?</p>
+      <div class="quiz-opts" role="group" aria-label="Opciones de respuesta">
+        <button class="quiz-opt" type="button">Velocidad para escribir y probar código funcionando</button>
+        <button class="quiz-opt" type="button">Conocimiento técnico amplio de patrones de desarrollo</button>
+        <button class="quiz-opt" type="button" data-correct>El criterio de negocio y la decisión final sobre qué se publica</button>
+      </div>
+      <p class="quiz-explain" hidden>Claude ejecuta rápido y con conocimiento técnico amplio, pero la decisión final —qué lanzar, qué publicar con el nombre de la marca— sigue siendo de la persona.</p>
+    </div>
+    <div class="quiz-q" data-q>
+      <p class="quiz-question">¿Qué es un MCP (Model Context Protocol)?</p>
+      <div class="quiz-opts" role="group" aria-label="Opciones de respuesta">
+        <button class="quiz-opt" type="button" data-correct>Un protocolo abierto que permite conectar herramientas externas, incluso propias</button>
+        <button class="quiz-opt" type="button">Una función exclusiva de Claude Code para desplegar sitios web</button>
+        <button class="quiz-opt" type="button">Un conector que solo Anthropic puede activar manualmente por pedido</button>
+      </div>
+      <p class="quiz-explain" hidden>MCP es un protocolo abierto, distinto de un conector directo ya empaquetado: permite conectar casi cualquier herramienta, incluidas herramientas propias, no solo las que ofrece Anthropic.</p>
+    </div>
+    <div class="quiz-score" data-score hidden></div>
+  </div>
+</section>
+<section class="sec" id="s04" aria-labelledby="h-s04">
+  <header class="sec-head reveal">
+    <span class="sec-mark">Sección 04</span>
+    <h2 id="h-s04">Flujo de trabajo y trazabilidad</h2>
+    <p class="sec-lede">Un flujo con pasos fijos y registro escrito, para saber siempre qué se hizo, poder volver atrás y poder delegar sin perder el hilo.</p>
+  </header>
+
+  <div class="prose reveal">
+    <p>Trabajar con Claude no es enviar un pedido y esperar un resultado suelto. Es seguir un recorrido con pasos identificables: qué se pidió, quién lo ejecutó, qué cambió y dónde quedó guardado. Ese orden cumple tres funciones concretas. Primero, deja saber en cualquier momento qué se hizo y por qué. Segundo, permite volver atrás si algo salió mal, porque cada cambio queda registrado en algún lugar. Tercero, permite delegar tareas — a otra persona del equipo o a Claude Code trabajando de forma autónoma — sin perder el control sobre el resultado final.</p>
+    <p>Los seis pasos que siguen son ese recorrido aplicado al trabajo técnico de 0800: desde que se define un objetivo hasta que el cambio queda publicado y documentado.</p>
+  </div>
+
+  <ol class="steps reveal">
+    <li class="step">
+      <span class="step-n" aria-hidden="true">01</span>
+      <div class="step-body">
+        <p class="step-t">Planificación</p>
+        <p>En el chat se define el objetivo y el alcance de la tarea: qué problema resuelve, qué archivos o secciones toca, qué queda afuera. Esta conversación es la base de todo lo que sigue.</p>
+      </div>
+    </li>
+    <li class="step">
+      <span class="step-n" aria-hidden="true">02</span>
+      <div class="step-body">
+        <p class="step-t">Registro de tarea</p>
+        <p>Lo que se va a hacer queda escrito en un tablero (por ejemplo Linear o Notion) antes de empezar a ejecutar. Así cualquiera puede ver qué está en curso sin tener que preguntar.</p>
+      </div>
+    </li>
+    <li class="step">
+      <span class="step-n" aria-hidden="true">03</span>
+      <div class="step-body">
+        <p class="step-t">Ejecución</p>
+        <p>Claude Code trabaja sobre los archivos reales del proyecto: lee el código existente, escribe los cambios y los deja listos para revisión. No trabaja sobre copias ni sobre descripciones del proyecto.</p>
+      </div>
+    </li>
+    <li class="step">
+      <span class="step-n" aria-hidden="true">04</span>
+      <div class="step-body">
+        <p class="step-t">Control de versiones</p>
+        <p>Cada cambio se guarda en un <em>repositorio</em> (la carpeta versionada del proyecto, alojada por ejemplo en GitHub) usando <em>Git</em>, el sistema que registra cada modificación con fecha y autor. Si algo falla, se puede volver a una versión anterior sin perder el resto del trabajo.</p>
+      </div>
+    </li>
+    <li class="step">
+      <span class="step-n" aria-hidden="true">05</span>
+      <div class="step-body">
+        <p class="step-t">Publicación</p>
+        <p>El <em>deploy</em> (la publicación técnica del sitio) lo hace un servicio como Netlify o Vercel, que toma el contenido del repositorio y lo pone en internet. No hay un paso manual de "subir archivos": el sitio se actualiza a partir de lo que está en el repositorio.</p>
+      </div>
+    </li>
+    <li class="step">
+      <span class="step-n" aria-hidden="true">06</span>
+      <div class="step-body">
+        <p class="step-t">Cierre</p>
+        <p>Se revisa el resultado contra el objetivo planteado en el paso 1 y se documenta lo que se hizo, para que quede disponible si hace falta retomarlo o explicarlo más adelante.</p>
+      </div>
+    </li>
+  </ol>
+
+  <figure class="diagram reveal">
+    <svg viewBox="0 0 720 260" role="img" aria-label="Diagrama de flujo de seis pasos: Planificación, Registro de tarea, Ejecución, Control de versiones, Publicación y Cierre, conectados en secuencia. Debajo del paso de Publicación se bifurca en dos cajas: Entorno de desarrollo y Producción, unidas por una flecha de promoción marcada revisión.">
+      <defs>
+        <marker id="s04-arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <polygon points="0,0 7,3 0,6" fill="var(--steel-2)" />
+        </marker>
+      </defs>
+
+      <!-- Pipeline superior -->
+      <g font-family="'IBM Plex Sans', sans-serif">
+        <!-- Box 01 -->
+        <rect x="12" y="30" width="96" height="70" rx="3" fill="var(--card)" stroke="var(--line-2)" stroke-width="1.25"/>
+        <text x="60" y="48" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="12" fill="var(--steel)">01</text>
+        <text x="60" y="68" text-anchor="middle" font-size="10.5" letter-spacing="1" fill="var(--ink)">PLANIFI-</text>
+        <text x="60" y="80" text-anchor="middle" font-size="10.5" letter-spacing="1" fill="var(--ink)">CACIÓN</text>
+
+        <!-- Box 02 -->
+        <rect x="132" y="30" width="96" height="70" rx="3" fill="var(--card)" stroke="var(--line-2)" stroke-width="1.25"/>
+        <text x="180" y="48" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="12" fill="var(--steel)">02</text>
+        <text x="180" y="68" text-anchor="middle" font-size="10.5" letter-spacing="1" fill="var(--ink)">REGISTRO</text>
+        <text x="180" y="80" text-anchor="middle" font-size="10.5" letter-spacing="1" fill="var(--ink)">DE TAREA</text>
+
+        <!-- Box 03 -->
+        <rect x="252" y="30" width="96" height="70" rx="3" fill="var(--card)" stroke="var(--line-2)" stroke-width="1.25"/>
+        <text x="300" y="48" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="12" fill="var(--steel)">03</text>
+        <text x="300" y="72" text-anchor="middle" font-size="10.5" letter-spacing="1" fill="var(--ink)">EJECUCIÓN</text>
+
+        <!-- Box 04 -->
+        <rect x="372" y="30" width="96" height="70" rx="3" fill="var(--card)" stroke="var(--line-2)" stroke-width="1.25"/>
+        <text x="420" y="48" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="12" fill="var(--steel)">04</text>
+        <text x="420" y="68" text-anchor="middle" font-size="10.5" letter-spacing="1" fill="var(--ink)">CONTROL DE</text>
+        <text x="420" y="80" text-anchor="middle" font-size="10.5" letter-spacing="1" fill="var(--ink)">VERSIONES</text>
+
+        <!-- Box 05 -->
+        <rect x="492" y="30" width="96" height="70" rx="3" fill="var(--paper-2)" stroke="var(--steel)" stroke-width="1.5"/>
+        <text x="540" y="48" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="12" fill="var(--steel)">05</text>
+        <text x="540" y="72" text-anchor="middle" font-size="10.5" letter-spacing="1" fill="var(--ink)">PUBLICACIÓN</text>
+
+        <!-- Box 06 -->
+        <rect x="612" y="30" width="96" height="70" rx="3" fill="var(--card)" stroke="var(--line-2)" stroke-width="1.25"/>
+        <text x="660" y="48" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="12" fill="var(--steel)">06</text>
+        <text x="660" y="72" text-anchor="middle" font-size="10.5" letter-spacing="1" fill="var(--ink)">CIERRE</text>
+      </g>
+
+      <!-- Flechas entre pasos -->
+      <g stroke="var(--steel-2)" stroke-width="1.25">
+        <line x1="108" y1="65" x2="130" y2="65" marker-end="url(#s04-arrow)"/>
+        <line x1="228" y1="65" x2="250" y2="65" marker-end="url(#s04-arrow)"/>
+        <line x1="348" y1="65" x2="370" y2="65" marker-end="url(#s04-arrow)"/>
+        <line x1="468" y1="65" x2="490" y2="65" marker-end="url(#s04-arrow)"/>
+        <line x1="588" y1="65" x2="610" y2="65" marker-end="url(#s04-arrow)"/>
+      </g>
+
+      <!-- Bifurcación bajo Publicación -->
+      <g stroke="var(--steel-2)" stroke-width="1.25" fill="none">
+        <line x1="540" y1="100" x2="540" y2="128"/>
+        <line x1="540" y1="128" x2="450" y2="158" marker-end="url(#s04-arrow)"/>
+        <line x1="540" y1="128" x2="630" y2="158" marker-end="url(#s04-arrow)"/>
+      </g>
+
+      <rect x="370" y="158" width="160" height="56" rx="3" fill="var(--card)" stroke="var(--line-2)" stroke-width="1.25"/>
+      <text x="450" y="180" text-anchor="middle" font-family="'IBM Plex Sans', sans-serif" font-size="10" letter-spacing="1" fill="var(--ink)">ENTORNO DE</text>
+      <text x="450" y="193" text-anchor="middle" font-family="'IBM Plex Sans', sans-serif" font-size="10" letter-spacing="1" fill="var(--ink)">DESARROLLO</text>
+
+      <rect x="550" y="158" width="160" height="56" rx="3" fill="var(--paper-2)" stroke="var(--steel)" stroke-width="1.5"/>
+      <text x="630" y="186" text-anchor="middle" font-family="'IBM Plex Sans', sans-serif" font-size="10" letter-spacing="1" fill="var(--ink)">PRODUCCIÓN</text>
+
+      <g stroke="var(--steel-2)" stroke-width="1.25">
+        <line x1="530" y1="186" x2="548" y2="186" marker-end="url(#s04-arrow)"/>
+      </g>
+      <text x="539" y="176" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" letter-spacing="1" fill="var(--ink-2)">SI SE APRUEBA</text>
+
+      <text x="450" y="230" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="var(--ink-2)">acá se prueba el cambio</text>
+      <text x="630" y="230" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="var(--ink-2)">acá está el sitio en vivo</text>
+    </svg>
+    <figcaption>Figura 2. Los seis pasos del flujo de trabajo. Tras la publicación, el cambio pasa por un entorno de desarrollo antes de llegar a producción.</figcaption>
+  </figure>
+
+  <aside class="caution reveal">
+    <span class="caution-label">Precaución</span>
+    <p>Regla de oro: nunca se hacen cambios directos en producción, es decir, sobre el sitio que ya está en vivo. Todo cambio se prueba primero en un entorno de desarrollo — una copia de trabajo donde los errores no afectan a nadie — y recién después de confirmar que funciona se publica en producción.</p>
+  </aside>
+</section>
+
+<section class="sec" id="s05" aria-labelledby="h-s05">
+  <header class="sec-head reveal">
+    <span class="sec-mark">Sección 05</span>
+    <h2 id="h-s05">MCP Shopify: operar la tienda</h2>
+    <p class="sec-lede">El conector de Shopify permite consultar y operar sobre la tienda real de 0800 desde una conversación con Claude.</p>
+  </header>
+
+  <div class="prose reveal">
+    <p>El conector de Shopify permite consultar y operar sobre la tienda real de 0800: productos y variantes, colecciones, descuentos, pedidos e inventario, y consultas de analytics sobre ventas. También permite ejecutar cambios masivos — por ejemplo, actualizar varios productos a la vez — cuando el pedido lo requiere.</p>
+    <p>Antes de usarlo conviene distinguir dos tipos de operación. Una <em>consulta</em> solo lee información de la tienda: no modifica nada y no tiene riesgo. Una <em>mutación</em>, en cambio, escribe sobre datos reales — cambia un precio, descuenta stock, crea un descuento, publica o despublica un producto. Las consultas son el punto de partida natural para tomar confianza con la herramienta; las mutaciones requieren más cuidado, porque afectan la tienda que los clientes ven en este momento.</p>
+  </div>
+
+  <figure class="prompt-box reveal">
+    <figcaption>Ejemplo — stock bajo y propuesta de liquidación</figcaption>
+    <pre>Listame los productos de la colección Cadenas con stock
+menor a 3 unidades y proponeme un descuento de liquidación
+para cada uno, con el porcentaje sugerido.</pre>
+  </figure>
+
+  <figure class="prompt-box reveal">
+    <figcaption>Ejemplo — actualización de descripciones</figcaption>
+    <pre>Redactame nuevas descripciones para estos 10 productos,
+manteniendo el tono de la marca: directo, sobrio, sin
+adjetivos vacíos. Mostrame primero las versiones nuevas
+para que las revise antes de subir nada a la tienda.</pre>
+  </figure>
+
+  <figure class="prompt-box reveal">
+    <figcaption>Ejemplo — ventas por canal</figcaption>
+    <pre>Comparame las ventas del último trimestre por canal de
+venta y decime cuál canal creció más y cuál se estancó.</pre>
+  </figure>
+
+  <figure class="prompt-box reveal">
+    <figcaption>Ejemplo — armado de una colección nueva</figcaption>
+    <pre>Necesito armar una colección nueva llamada Plata pesada.
+Criterio de inclusión: anillos y cadenas con más de 15
+gramos de plata. Buscame los productos que cumplen y
+armame el listado antes de crear la colección.</pre>
+  </figure>
+
+  <figure class="prompt-box reveal">
+    <figcaption>Ejemplo — pedidos pendientes de envío</figcaption>
+    <pre>Mostrame los pedidos de la última semana que todavía no
+se despacharon, ordenados por fecha, con el estado actual
+de cada uno.</pre>
+  </figure>
+
+  <aside class="caution reveal">
+    <span class="caution-label">Precaución</span>
+    <p>Toda mutación sobre la tienda se revisa antes de confirmar. El protocolo es en dos tiempos: primero se le pide a Claude el plan o el listado exacto de cambios (qué producto, qué campo, qué valor nuevo); se revisa ese listado con calma; recién después se autoriza la ejecución. Nunca se autoriza un cambio masivo sin haber visto antes el listado completo de lo que se va a modificar.</p>
+  </aside>
+
+  <div class="quiz reveal" data-quiz>
+    <div class="quiz-head">
+      <span class="quiz-tag">Checkpoint</span>
+      <h3 id="quiz-s05-t">Validá lo aprendido</h3>
+      <p class="quiz-sub">Tres preguntas sobre cómo operar la tienda con el conector de Shopify.</p>
+    </div>
+
+    <div class="quiz-q" data-q>
+      <p class="quiz-question">¿Cuál es la diferencia entre una consulta y una mutación?</p>
+      <div class="quiz-opts" role="group" aria-label="Opciones de respuesta">
+        <button class="quiz-opt" type="button" data-correct>La consulta solo lee información de la tienda; la mutación escribe o modifica datos reales.</button>
+        <button class="quiz-opt" type="button">La consulta la ejecuta Claude Code y la mutación se hace siempre a mano en el admin de Shopify.</button>
+        <button class="quiz-opt" type="button">Son lo mismo: ambas cambian datos, solo cambia el nombre según la sección de Shopify.</button>
+      </div>
+      <p class="quiz-explain" hidden>La consulta no tiene riesgo porque no toca nada. La mutación sí, porque cambia precios, stock, descuentos o el estado de publicación de un producto real.</p>
+    </div>
+
+    <div class="quiz-q" data-q>
+      <p class="quiz-question">Antes de autorizar un cambio masivo sobre varios productos, ¿qué corresponde hacer?</p>
+      <div class="quiz-opts" role="group" aria-label="Opciones de respuesta">
+        <button class="quiz-opt" type="button">Autorizarlo directamente si el pedido inicial fue claro, para no perder tiempo.</button>
+        <button class="quiz-opt" type="button" data-correct>Pedir primero el plan o listado exacto de cambios, revisarlo, y recién ahí autorizar la ejecución.</button>
+        <button class="quiz-opt" type="button">Pedirle a Claude que avise por chat si algo sale mal, y seguir de largo.</button>
+      </div>
+      <p class="quiz-explain" hidden>El protocolo es en dos tiempos: primero el listado de qué se va a cambiar, después la revisión, y solo entonces la ejecución. Nunca se autoriza a ciegas.</p>
+    </div>
+
+    <div class="quiz-q" data-q>
+      <p class="quiz-question">¿Qué conviene hacer durante las primeras semanas de uso del conector de Shopify?</p>
+      <div class="quiz-opts" role="group" aria-label="Opciones de respuesta">
+        <button class="quiz-opt" type="button">Empezar directamente con mutaciones grandes, para aprovechar la herramienta a fondo desde el día uno.</button>
+        <button class="quiz-opt" type="button">Desactivar las consultas y trabajar solo con cambios masivos, que son más eficientes.</button>
+        <button class="quiz-opt" type="button" data-correct>Trabajar sobre todo con consultas, para tomar confianza con la herramienta antes de hacer mutaciones.</button>
+      </div>
+      <p class="quiz-explain" hidden>Las consultas no tienen riesgo y permiten entender cómo responde el conector antes de arriesgar cambios sobre datos reales.</p>
+    </div>
+
+    <div class="quiz-score" data-score hidden></div>
+  </div>
+</section>
+<section class="sec" id="s06" aria-labelledby="h-s06">
+  <header class="sec-head reveal">
+    <span class="sec-mark">Sección 06</span>
+    <h2 id="h-s06">MCP Higgsfield y Magnific: producción de contenido</h2>
+    <p class="sec-lede">Dos conectores para llevar una idea de campaña de la conversación a la pieza final.</p>
+  </header>
+
+  <div class="prose reveal">
+    <h3>Higgsfield: generación de imagen y video</h3>
+    <p>Higgsfield es el conector para generar imagen y video con inteligencia artificial dentro de pipelines de campaña: se define la dirección creativa en el chat, se generan variantes y se itera hasta llegar a la pieza final. El equipo de 0800 ya produjo campañas cinemáticas de producto y series de contenido completas con estas herramientas.</p>
+  </div>
+
+  <div class="prose reveal">
+    <h3>Magnific: upscale, generación y edición</h3>
+    <p><em>Upscale</em> es el proceso de aumentar la resolución de una imagen o un video sin perder nitidez, típico para llevar un archivo de campaña a tamaño de impresión o a una pantalla grande. Magnific cubre ese upscale, además de generación y edición de imagen: mejora de detalle, limpieza y ajustes puntuales sobre piezas ya generadas o fotografiadas.</p>
+  </div>
+
+  <figure class="diagram reveal">
+    <svg viewBox="0 35 720 190" role="img" aria-label="Diagrama de flujo de producción: idea en el chat, prompts de generación, iteración, selección, upscale o ajuste y publicación, con un bucle de retorno entre iteración y prompts de generación">
+      <defs>
+        <marker id="s06-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <polygon points="0,0 10,5 0,10" fill="var(--steel)"/>
+        </marker>
+      </defs>
+
+      <rect x="35" y="60" width="100" height="70" rx="3" fill="var(--card)" stroke="var(--steel-2)" stroke-width="1.5"/>
+      <text x="85" y="91" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="11" letter-spacing="1" fill="var(--ink)">IDEA</text>
+      <text x="85" y="105" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="11" letter-spacing="1" fill="var(--ink)">(CHAT)</text>
+
+      <rect x="145" y="60" width="100" height="70" rx="3" fill="var(--card)" stroke="var(--steel-2)" stroke-width="1.5"/>
+      <text x="195" y="91" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="11" letter-spacing="1" fill="var(--ink)">PROMPTS DE</text>
+      <text x="195" y="105" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="11" letter-spacing="1" fill="var(--ink)">GENERACIÓN</text>
+
+      <rect x="255" y="60" width="100" height="70" rx="3" fill="var(--card)" stroke="var(--steel-2)" stroke-width="1.5"/>
+      <text x="305" y="99" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="11" letter-spacing="1" fill="var(--ink)">ITERACIÓN</text>
+
+      <rect x="365" y="60" width="100" height="70" rx="3" fill="var(--card)" stroke="var(--steel-2)" stroke-width="1.5"/>
+      <text x="415" y="99" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="11" letter-spacing="1" fill="var(--ink)">SELECCIÓN</text>
+
+      <rect x="475" y="60" width="100" height="70" rx="3" fill="var(--card)" stroke="var(--steel-2)" stroke-width="1.5"/>
+      <text x="525" y="91" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="11" letter-spacing="1" fill="var(--ink)">UPSCALE /</text>
+      <text x="525" y="105" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="11" letter-spacing="1" fill="var(--ink)">AJUSTE</text>
+
+      <rect x="585" y="60" width="100" height="70" rx="3" fill="var(--card)" stroke="var(--steel-2)" stroke-width="1.5"/>
+      <text x="635" y="99" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="11" letter-spacing="1" fill="var(--ink)">PUBLICACIÓN</text>
+
+      <line x1="135" y1="95" x2="145" y2="95" stroke="var(--steel)" stroke-width="1.5" marker-end="url(#s06-arrow)"/>
+      <line x1="245" y1="95" x2="255" y2="95" stroke="var(--steel)" stroke-width="1.5" marker-end="url(#s06-arrow)"/>
+      <line x1="355" y1="95" x2="365" y2="95" stroke="var(--steel)" stroke-width="1.5" marker-end="url(#s06-arrow)"/>
+      <line x1="465" y1="95" x2="475" y2="95" stroke="var(--steel)" stroke-width="1.5" marker-end="url(#s06-arrow)"/>
+      <line x1="575" y1="95" x2="585" y2="95" stroke="var(--steel)" stroke-width="1.5" marker-end="url(#s06-arrow)"/>
+
+      <path d="M305,130 V190 H195 V130" fill="none" stroke="var(--steel-2)" stroke-width="1.5" marker-end="url(#s06-arrow)"/>
+      <text x="250" y="204" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="10" letter-spacing="1" fill="var(--ink)">AJUSTE DE PROMPT</text>
+    </svg>
+    <figcaption>Figura 3. Pipeline típico de producción con Higgsfield y Magnific, del prompt inicial a la publicación.</figcaption>
+  </figure>
+
+  <figure class="prompt-box reveal">
+    <figcaption>Ejemplo — serie de campaña sobre hormigón</figcaption>
+    <pre>Generame una serie de 4 imágenes de campaña para la
+cadena [nombre], fondo de hormigón húmedo, luz dura
+lateral tipo flash directo, sombras marcadas. Usá como
+referencia las fotos de producto reales que te paso,
+no inventes la pieza.</pre>
+  </figure>
+
+  <figure class="prompt-box reveal">
+    <figcaption>Ejemplo — video de producto en VHS/tungsteno</figcaption>
+    <pre>Armame un video corto de 6 segundos de este anillo
+girando sobre su eje, estética VHS con grano y
+viñeteado, luz tungsteno cálida. Partí de las fotos
+reales del producto, no reemplaces la pieza por otra
+generada.</pre>
+  </figure>
+
+  <figure class="prompt-box reveal">
+    <figcaption>Ejemplo — upscale de foto de lookbook</figcaption>
+    <pre>Hacé upscale de esta foto de lookbook a resolución
+de impresión y limpiá el ruido de la imagen. No
+toques la forma ni el brillo de la pieza, solo
+mejorá nitidez y resolución del archivo.</pre>
+  </figure>
+</section>
+
+<section class="sec" id="s06-1" aria-labelledby="h-s06-1">
+  <header class="sec-head reveal">
+    <span class="sec-mark">Sección 06.1</span>
+    <h2 id="h-s06-1">Reglas de persistencia de marca</h2>
+    <p class="sec-lede">Cuatro reglas innegociables para todo contenido visual generado con IA en 0800.</p>
+  </header>
+
+  <div class="prose reveal">
+    <p>Estas reglas no son una preferencia de estilo: son la condición para que el contenido generado siga siendo 0800. Se aplican a carruseles, videos e imágenes, sin excepción.</p>
+  </div>
+
+  <aside class="caution reveal">
+    <span class="caution-label">Precaución</span>
+    <ol>
+      <li>Solo joyas reales del catálogo, usando referencias fotográficas de producto reales; la IA nunca inventa ni altera piezas.</li>
+      <li>El logo oficial es el monograma ДР en forma de rombo/escudo (DR cirílico); jamás logos generados o inventados por IA: siempre se incrusta el archivo real del logo.</li>
+      <li>Títulos en código de marca y en español rioplatense.</li>
+      <li>Cero invención de piezas, logos o elementos de marca. Aplica a carruseles, videos e imágenes sin excepción.</li>
+    </ol>
+  </aside>
+
+  <div class="prose reveal">
+    <p>Una pieza inventada es, para el catálogo, un producto que no existe: genera expectativa sobre algo que no se puede vender. Un logo regenerado por IA, por mínima que sea la diferencia con el original, degrada la identidad visual de la marca.</p>
+  </div>
+
+  <div class="quiz reveal" data-quiz>
+    <div class="quiz-head">
+      <span class="quiz-tag">Checkpoint</span>
+      <h3 id="quiz-s06-1-t">Validá lo aprendido</h3>
+      <p class="quiz-sub">Tres preguntas sobre las reglas de persistencia de marca.</p>
+    </div>
+
+    <div class="quiz-q" data-q>
+      <p class="quiz-question">¿Qué se hace con el logo ДР en una pieza generada con IA?</p>
+      <div class="quiz-opts" role="group" aria-label="Opciones de respuesta">
+        <button class="quiz-opt" type="button">Pedirle a la IA que lo recree en el estilo de la pieza</button>
+        <button class="quiz-opt" type="button" data-correct>Incrustar el archivo real del logo; nunca uno generado por IA</button>
+        <button class="quiz-opt" type="button">Dejarlo afuera y agregarlo después a mano en el diseño final</button>
+      </div>
+      <p class="quiz-explain" hidden>El logo oficial es un archivo fijo. La IA nunca lo genera ni lo recrea: se incrusta siempre el original.</p>
+    </div>
+
+    <div class="quiz-q" data-q>
+      <p class="quiz-question">La IA propone una joya "parecida pero mejorada" a una del catálogo. ¿Qué corresponde hacer?</p>
+      <div class="quiz-opts" role="group" aria-label="Opciones de respuesta">
+        <button class="quiz-opt" type="button">Usarla igual, si el resultado visual convence más que la pieza real</button>
+        <button class="quiz-opt" type="button">Pedirle a la IA que la ajuste hasta que sea idéntica a la original</button>
+        <button class="quiz-opt" type="button" data-correct>Descartarla: en 0800 solo se muestran joyas reales del catálogo</button>
+      </div>
+      <p class="quiz-explain" hidden>Cualquier variación generada es una pieza que no existe. Se descarta, no se negocia su parecido.</p>
+    </div>
+
+    <div class="quiz-q" data-q>
+      <p class="quiz-question">¿De dónde salen las joyas que aparecen en una imagen de campaña generada con IA?</p>
+      <div class="quiz-opts" role="group" aria-label="Opciones de respuesta">
+        <button class="quiz-opt" type="button" data-correct>De las referencias fotográficas reales del producto que se le pasan a la IA</button>
+        <button class="quiz-opt" type="button">La IA las genera a partir de la descripción textual de la colección</button>
+        <button class="quiz-opt" type="button">De variaciones que Higgsfield propone automáticamente sobre el catálogo</button>
+      </div>
+      <p class="quiz-explain" hidden>Siempre se parte de fotos reales del producto como referencia; la IA no diseña piezas nuevas.</p>
+    </div>
+
+    <div class="quiz-score" data-score hidden></div>
+  </div>
+</section>
+
+<section class="sec" id="s07" aria-labelledby="h-s07">
+  <header class="sec-head reveal">
+    <span class="sec-mark">Sección 07</span>
+    <h2 id="h-s07">Aplicación a gestión, ideas y venta de proyectos</h2>
+    <p class="sec-lede">Usos de Claude que no pasan por producto ni por contenido visual: pensar, escribir y ordenar el trabajo.</p>
+  </header>
+
+  <div class="prose reveal">
+    <p>El chat —y Cowork cuando la tarea implica archivos y varios pasos— también sirve para el trabajo de dirección de 0800:</p>
+    <ul>
+      <li><strong>Desarrollar y estresar ideas de producto:</strong> pedirle a Claude que ataque una idea, no que la celebre.</li>
+      <li><strong>Preparar propuestas y presentaciones</strong> para vender un proyecto a un cliente o un socio.</li>
+      <li><strong>Redactar comunicaciones</strong> con proveedores, clientes y prensa.</li>
+      <li><strong>Analizar documentos y datos:</strong> costos, listas de precios de proveedores, métricas exportadas.</li>
+      <li><strong>Coordinar tareas:</strong> convertir una conversación suelta en una lista de pendientes concreta.</li>
+    </ul>
+  </div>
+
+  <figure class="prompt-box reveal">
+    <figcaption>Ejemplo — estresar una idea de negocio</figcaption>
+    <pre>Quiero lanzar una línea de joyería por encargo con
+seña online del 30%. Dame los 5 argumentos más
+fuertes en contra de esta idea, sin suavizarlos.</pre>
+  </figure>
+
+  <aside class="note reveal">
+    <span class="note-label">Nota</span>
+    <p>Para tareas de varios pasos con archivos —ordenar una carpeta de fotos de campaña, armar un dossier para un cliente— conviene Cowork. Para conversar una idea o pensar en voz alta, el chat alcanza.</p>
+  </aside>
+</section>
+<section class="sec" id="s08" aria-labelledby="h-s08">
+  <header class="sec-head reveal">
+    <span class="sec-mark">Sección 08</span>
+    <h2 id="h-s08">Buenas prácticas, control y límites</h2>
+    <p class="sec-lede">Seis prácticas que sostienen todo lo anterior, y lo que nunca va dentro de una conversación.</p>
+  </header>
+  <div class="def-grid reveal">
+    <div class="def">
+      <span class="def-term">Verificación</span>
+      <p>Toda salida relevante se verifica antes de usarse: precios, stock, datos de clientes, afirmaciones sobre la marca. Claude puede redactar y cruzar información con velocidad, pero la confirmación final de un dato que se va a usar en una decisión es un paso humano, no una opción.</p>
+    </div>
+    <div class="def">
+      <span class="def-term">Responsabilidad humana</span>
+      <p>Lo que se publica o se cambia lo decide una persona. Claude prepara la opción, ordena la información y ejecuta el paso técnico; la firma final —publicar un posteo, aplicar un cambio en Shopify, enviar una respuesta a un cliente— queda del lado de Roque.</p>
+    </div>
+    <div class="def">
+      <span class="def-term">Especificidad</span>
+      <p>Un prompt concreto rinde más que uno genérico: nombra el resultado esperado, el formato de entrega y las restricciones (extensión, tono, qué no incluir). "Escribime algo para Instagram" da un resultado mediocre; "armame tres variantes de copy para el carrusel de la colección Cadenas, tono directo, sin exclamaciones" da algo usable.</p>
+    </div>
+    <div class="def">
+      <span class="def-term">Contexto suficiente</span>
+      <p>Los archivos, ejemplos y antecedentes necesarios se entregan antes de pedir el resultado, no después. Un Proyecto con las instrucciones de marca cargadas, una planilla real o un ejemplo de un texto que funcionó son el contexto que evita una vuelta extra de corrección.</p>
+    </div>
+    <div class="def">
+      <span class="def-term">Iteración</span>
+      <p>La primera versión que entrega Claude es un borrador de partida, no el resultado final. Se ajusta con indicaciones puntuales sobre qué cambiar —más corto, otro tono, sacar tal frase— en lugar de descartar la herramienta o repetir el mismo pedido esperando algo distinto.</p>
+    </div>
+    <div class="def">
+      <span class="def-term">Trazabilidad</span>
+      <p>Las decisiones y los cambios quedan registrados en algún lugar consultable: el tablero de tareas, el historial de Git en Claude Code, la conversación misma. Ante una duda posterior sobre por qué se hizo algo de determinada manera, tiene que poder reconstruirse.</p>
+    </div>
+  </div>
+  <aside class="caution reveal">
+    <span class="caution-label">Precaución</span>
+    <p>Ninguna contraseña, token ni clave de API se pega en una conversación con Claude, sea Chat, Cowork o Code. Las credenciales viven en los sistemas que las gestionan —Shopify, el panel de conectores, un gestor de contraseñas— y se cargan ahí, nunca como texto en un mensaje. Los datos sensibles de clientes (contactos, direcciones, historial de compra) se comparten con criterio y solo cuando la tarea concreta lo requiere, nunca por defecto.</p>
+  </aside>
+  <div class="quiz reveal" data-quiz>
+    <div class="quiz-head">
+      <span class="quiz-tag">Checkpoint</span>
+      <h3 id="quiz-s08-t">Validá lo aprendido</h3>
+      <p class="quiz-sub">Tres preguntas sobre buenas prácticas y límites.</p>
+    </div>
+    <div class="quiz-q" data-q>
+      <p class="quiz-question">Claude reporta que un producto tiene 2 unidades en stock. ¿Qué se hace antes de tomar una decisión con ese dato?</p>
+      <div class="quiz-opts" role="group" aria-label="Opciones de respuesta">
+        <button class="quiz-opt" type="button">Usarlo directo: si lo dice Claude conectado al MCP de Shopify, ya está confirmado</button>
+        <button class="quiz-opt" type="button">Pedirle a Claude que lo verifique una segunda vez en la misma conversación</button>
+        <button class="quiz-opt" type="button" data-correct>Verificarlo en el panel de Shopify antes de usarlo en cualquier decisión</button>
+      </div>
+      <p class="quiz-explain" hidden>Aunque el dato venga de una consulta real vía MCP, la verificación final contra el panel de Shopify es el paso humano que no se salta antes de decidir algo con ese número.</p>
+    </div>
+    <div class="quiz-q" data-q>
+      <p class="quiz-question">Un prompt le pidió a Claude un texto y el resultado fue mediocre. ¿Cuál es la respuesta correcta?</p>
+      <div class="quiz-opts" role="group" aria-label="Opciones de respuesta">
+        <button class="quiz-opt" type="button">Concluir que la herramienta no sirve para ese tipo de tarea y no volver a intentarlo</button>
+        <button class="quiz-opt" type="button">Repetir exactamente el mismo prompt, porque la segunda respuesta suele ser mejor</button>
+        <button class="quiz-opt" type="button" data-correct>Iterar con indicaciones puntuales sobre qué cambiar del resultado obtenido</button>
+      </div>
+      <p class="quiz-explain" hidden>La primera versión es un borrador. Ajustarlo con indicaciones concretas —tono, extensión, qué sacar— rinde más que abandonar la herramienta o repetir el pedido sin cambios.</p>
+    </div>
+    <div class="quiz-q" data-q>
+      <p class="quiz-question">¿Dónde se cargan las contraseñas y claves de API que hacen falta para una tarea?</p>
+      <div class="quiz-opts" role="group" aria-label="Opciones de respuesta">
+        <button class="quiz-opt" type="button" data-correct>Nunca en la conversación con Claude: van en los sistemas que gestionan esas credenciales</button>
+        <button class="quiz-opt" type="button">En el chat, siempre que sea una conversación de un Proyecto privado</button>
+        <button class="quiz-opt" type="button">En un archivo de texto adjunto a la conversación, para que Claude lo lea una sola vez</button>
+      </div>
+      <p class="quiz-explain" hidden>Ni en el chat ni en un archivo adjunto: las credenciales se gestionan en sus propios sistemas (Shopify, el panel de conectores, un gestor de contraseñas), nunca como texto dentro de una conversación.</p>
+    </div>
+    <div class="quiz-score" data-score hidden></div>
+  </div>
+</section>
+<section class="sec" id="s09" aria-labelledby="h-s09">
+  <header class="sec-head reveal">
+    <span class="sec-mark">Sección 09</span>
+    <h2 id="h-s09">Plan de primeros pasos (2 semanas)</h2>
+    <p class="sec-lede">Una progresión de menor a mayor riesgo: primero leer, después tocar.</p>
+  </header>
+  <div class="prose reveal">
+    <p>El orden de estos ocho pasos no es arbitrario: cada uno se apoya en el anterior, y las consultas de solo lectura van antes que cualquier cambio real sobre la tienda o la marca.</p>
+  </div>
+  <div class="table-wrap reveal">
+    <table class="data">
+      <thead>
+        <tr>
+          <th scope="col">Paso</th>
+          <th scope="col">Actividad</th>
+          <th scope="col">Resultado esperado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td data-th="Paso">1</td>
+          <td data-th="Actividad">Familiarización con el chat y creación de un Proyecto de 0800 con instrucciones de marca</td>
+          <td data-th="Resultado esperado">Un Proyecto activo que responde con el tono de la marca</td>
+        </tr>
+        <tr>
+          <td data-th="Paso">2</td>
+          <td data-th="Actividad">Primer entregable con una skill, sobre un documento o planilla real</td>
+          <td data-th="Resultado esperado">Un archivo terminado y usable</td>
+        </tr>
+        <tr>
+          <td data-th="Paso">3</td>
+          <td data-th="Actividad">Sesión de Cowork con una tarea real de la marca</td>
+          <td data-th="Resultado esperado">Una tarea de varios pasos completada de forma autónoma y revisada</td>
+        </tr>
+        <tr>
+          <td data-th="Paso">4</td>
+          <td data-th="Actividad">Lectura de la tienda vía MCP Shopify, solo consultas</td>
+          <td data-th="Resultado esperado">Tres consultas útiles respondidas con datos reales, verificadas contra el panel de Shopify</td>
+        </tr>
+        <tr>
+          <td data-th="Paso">5</td>
+          <td data-th="Actividad">Primera mutación supervisada en Shopify: un cambio menor, con plan previo revisado</td>
+          <td data-th="Resultado esperado">Un cambio aplicado y verificado, con el protocolo de dos tiempos cumplido</td>
+        </tr>
+        <tr>
+          <td data-th="Paso">6</td>
+          <td data-th="Actividad">Primer pipeline de contenido Higgsfield/Magnific respetando las reglas de marca</td>
+          <td data-th="Resultado esperado">Una pieza de contenido publicable que cumple las cuatro reglas de persistencia</td>
+        </tr>
+        <tr>
+          <td data-th="Paso">7</td>
+          <td data-th="Actividad">Observación de un flujo completo en Claude Code, acompañado</td>
+          <td data-th="Resultado esperado">Entender el ciclo planificación → ejecución → versionado → publicación sin operarlo</td>
+        </tr>
+        <tr>
+          <td data-th="Paso">8</td>
+          <td data-th="Actividad">Primer proyecto propio dirigido en Claude Code, por ejemplo una landing simple</td>
+          <td data-th="Resultado esperado">Un proyecto publicado, dirigido de punta a punta</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <aside class="note reveal">
+    <span class="note-label">Nota</span>
+    <p>El ritmo de dos semanas es orientativo, no una obligación de calendario. Lo que importa es no saltear el orden: cada paso da la base que necesita el siguiente.</p>
+  </aside>
+</section>
+<section class="sec" id="s10" aria-labelledby="h-s10">
+  <header class="sec-head reveal">
+    <span class="sec-mark">Sección 10</span>
+    <h2 id="h-s10">Glosario</h2>
+    <p class="sec-lede">Los 21 términos que aparecen en este documento, explicados en simple y en orden alfabético. Ideal para volver acá cuando una palabra no cierra del todo.</p>
+  </header>
+  <div class="def-grid reveal">
+    <div class="def">
+      <span class="def-term">Alucinación</span>
+      <p>Una respuesta que suena segura y precisa pero es incorrecta o directamente inventada por el modelo. Por eso ningún precio, stock o dato de producto se publica sin chequearlo antes contra la fuente real.</p>
+    </div>
+    <div class="def">
+      <span class="def-term">Artefacto</span>
+      <p>Un documento, página o fragmento de código que Claude arma y muestra aparte de la charla, para editarlo y reusarlo. Conviene para todo entregable que se necesita ver y ajustar fuera del hilo del chat.</p>
+    </div>
+    <div class="def">
+      <span class="def-term">Conector</span>
+      <svg class="def-mini" viewBox="0 0 260 72" role="img" aria-label="Claude y Shopify conectados por una flecha doble">
+        <rect x="8" y="23" width="82" height="26" rx="8" fill="var(--card)" stroke="var(--line)"/>
+        <text x="49" y="40" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="var(--steel)">CLAUDE</text>
+        <line x1="96" y1="36" x2="164" y2="36" stroke="var(--steel-2)" stroke-width="1.5"/>
+        <polygon points="96,36 103,32 103,40" fill="var(--steel-2)"/>
+        <polygon points="164,36 157,32 157,40" fill="var(--steel-2)"/>
+        <rect x="170" y="23" width="82" height="26" rx="8" fill="var(--card)" stroke="var(--line)"/>
+        <text x="211" y="40" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="var(--steel)">SHOPIFY</text>
+      </svg>
+      <p>Una integración puntual que le da a Claude acceso a una herramienta externa concreta —Shopify, un calendario, un repositorio— para consultarla u operarla directo. El MCP es el protocolo que hace posible ese enlace.</p>
+    </div>
+    <div class="def">
+      <span class="def-term">Contexto</span>
+      <p>Todo lo que el modelo tiene disponible al momento de responder: lo charlado antes en la conversación, los archivos que se adjuntaron, las instrucciones fijas de un Proyecto. Cuanto mejor el contexto, mejor la respuesta.</p>
+    </div>
+    <div class="def">
+      <span class="def-term">Cowork</span>
+      <svg class="def-mini" viewBox="0 0 260 72" role="img" aria-label="Una tarea que pasa por tres pasos hasta convertirse en entregable">
+        <rect x="6" y="23" width="58" height="26" rx="8" fill="var(--card)" stroke="var(--line)"/>
+        <text x="35" y="40" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="var(--steel)">TAREA</text>
+        <line x1="70" y1="36" x2="172" y2="36" stroke="var(--steel-2)" stroke-width="1.5"/>
+        <circle cx="98" cy="36" r="4" fill="var(--steel-2)"/>
+        <circle cx="121" cy="36" r="4" fill="var(--steel-2)"/>
+        <circle cx="144" cy="36" r="4" fill="var(--steel-2)"/>
+        <polygon points="172,36 165,32 165,40" fill="var(--steel-2)"/>
+        <rect x="176" y="23" width="80" height="26" rx="8" fill="var(--tint)" stroke="var(--steel)"/>
+        <text x="216" y="40" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="8" fill="var(--steel)">ENTREGABLE</text>
+      </svg>
+      <p>El modo agéntico de Claude para trabajo de conocimiento: se le da una tarea de varios pasos y la resuelve sola, incluso en sesiones remotas que siguen corriendo con la laptop cerrada.</p>
+    </div>
+    <div class="def">
+      <span class="def-term">Deploy (publicación)</span>
+      <svg class="def-mini" viewBox="0 0 260 72" role="img" aria-label="Del repositorio a la nube y de ahí a una URL pública">
+        <rect x="6" y="23" width="52" height="26" rx="8" fill="var(--card)" stroke="var(--line)"/>
+        <text x="32" y="40" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="var(--steel)">REPO</text>
+        <line x1="60" y1="36" x2="98" y2="36" stroke="var(--steel-2)" stroke-width="1.5"/>
+        <polygon points="98,36 91,32 91,40" fill="var(--steel-2)"/>
+        <rect x="100" y="23" width="52" height="26" rx="8" fill="var(--card)" stroke="var(--line)"/>
+        <text x="126" y="40" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="var(--steel)">NUBE</text>
+        <line x1="154" y1="36" x2="192" y2="36" stroke="var(--steel-2)" stroke-width="1.5"/>
+        <polygon points="192,36 185,32 185,40" fill="var(--steel-2)"/>
+        <rect x="194" y="16" width="60" height="40" rx="8" fill="var(--tint)" stroke="var(--steel)"/>
+        <text x="224" y="33" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="7.5" fill="var(--steel)">URL</text>
+        <text x="224" y="45" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="7.5" fill="var(--steel)">PÚBLICA</text>
+      </svg>
+      <p>El paso en el que un cambio deja de ser un archivo de trabajo interno y pasa a estar visible en su entorno final —una tienda, un sitio—. Antes del deploy, nadie de afuera lo ve.</p>
+    </div>
+    <div class="def">
+      <span class="def-term">Git</span>
+      <svg class="def-mini" viewBox="0 0 260 72" role="img" aria-label="Línea de tiempo con tres versiones; siempre se puede volver a una anterior">
+        <text x="50" y="16" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="var(--steel)">V1</text>
+        <text x="130" y="16" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="var(--steel)">V2</text>
+        <text x="210" y="16" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="var(--steel)">V3</text>
+        <line x1="30" y1="28" x2="230" y2="28" stroke="var(--line)" stroke-width="1.5"/>
+        <circle cx="50" cy="28" r="5" fill="var(--steel-2)"/>
+        <circle cx="130" cy="28" r="5" fill="var(--steel-2)"/>
+        <circle cx="210" cy="28" r="5" fill="var(--tint)" stroke="var(--steel)"/>
+        <path d="M205,35 C170,58 90,58 55,35" fill="none" stroke="var(--steel-2)" stroke-width="1.5"/>
+        <polygon points="55,35 63,32 61,40" fill="var(--steel-2)"/>
+        <text x="130" y="68" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="8" fill="var(--steel)">SE PUEDE VOLVER</text>
+      </svg>
+      <p>El sistema que registra cada cambio hecho sobre el código de un proyecto, con la posibilidad de volver a una versión anterior cuando haga falta. Es la base de la trazabilidad en Claude Code.</p>
+    </div>
+    <div class="def">
+      <span class="def-term">IA agéntica</span>
+      <p>Un modelo que no se queda en redactar: ejecuta una tarea de varios pasos por su cuenta, busca información, la cruza, decide un paso intermedio y entrega un resultado ya armado.</p>
+    </div>
+    <div class="def">
+      <span class="def-term">IA generativa</span>
+      <p>El tipo de sistema que crea contenido nuevo —texto, imagen, audio— a partir de una instrucción, en lugar de solo buscar o clasificar lo que ya existe.</p>
+    </div>
+    <div class="def">
+      <span class="def-term">LLM (modelo)</span>
+      <p>Sigla de <em>large language model</em>, modelo de lenguaje grande: el motor entrenado con enormes volúmenes de texto que predice y arma respuestas coherentes. Claude es un LLM.</p>
+    </div>
+    <div class="def">
+      <span class="def-term">MCP</span>
+      <svg class="def-mini" viewBox="0 0 260 72" role="img" aria-label="Claude conectado a Shopify a través del protocolo MCP en el medio">
+        <rect x="4" y="23" width="62" height="26" rx="8" fill="var(--card)" stroke="var(--line)"/>
+        <text x="35" y="40" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="var(--steel)">CLAUDE</text>
+        <line x1="68" y1="36" x2="96" y2="36" stroke="var(--steel-2)" stroke-width="1.5"/>
+        <polygon points="96,36 89,32 89,40" fill="var(--steel-2)"/>
+        <rect x="98" y="23" width="44" height="26" rx="8" fill="var(--tint)" stroke="var(--steel)"/>
+        <text x="120" y="40" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="var(--steel)">MCP</text>
+        <line x1="144" y1="36" x2="172" y2="36" stroke="var(--steel-2)" stroke-width="1.5"/>
+        <polygon points="172,36 165,32 165,40" fill="var(--steel-2)"/>
+        <rect x="174" y="23" width="82" height="26" rx="8" fill="var(--card)" stroke="var(--line)"/>
+        <text x="215" y="40" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="var(--steel)">SHOPIFY</text>
+      </svg>
+      <p><em>Model Context Protocol.</em> El protocolo que permite a Claude conectarse y operar directo sobre una herramienta externa, en vez de que alguien copie y pegue datos a mano entre los dos sistemas.</p>
+    </div>
+    <div class="def">
+      <span class="def-term">Memoria</span>
+      <p>La capacidad de Claude de retener contexto útil de una conversación a otra, sin necesidad de repetir cada vez la misma información de base.</p>
+    </div>
+    <div class="def">
+      <span class="def-term">Mutación</span>
+      <svg class="def-mini" viewBox="0 0 260 72" role="img" aria-label="Leer no tiene riesgo; escribir se revisa antes de confirmar">
+        <rect x="10" y="4" width="240" height="28" rx="8" fill="var(--card)" stroke="var(--line)"/>
+        <text x="130" y="22" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="var(--steel)">LEER · SIN RIESGO</text>
+        <rect x="10" y="40" width="240" height="28" rx="8" fill="var(--tint)" stroke="var(--steel)"/>
+        <text x="130" y="58" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="var(--steel)">ESCRIBIR · SE REVISA</text>
+      </svg>
+      <p>Un cambio real sobre datos de un sistema externo —modificar un precio, actualizar stock—, distinto de una consulta que solo lee información sin tocarla. Por eso una mutación siempre se revisa antes de confirmarla.</p>
+    </div>
+    <div class="def">
+      <span class="def-term">Pipeline de contenido</span>
+      <svg class="def-mini" viewBox="0 0 260 72" role="img" aria-label="Imagen, luego upscale, luego ajuste final">
+        <rect x="4" y="23" width="66" height="26" rx="8" fill="var(--card)" stroke="var(--line)"/>
+        <text x="37" y="40" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="var(--steel)">IMAGEN</text>
+        <line x1="72" y1="36" x2="100" y2="36" stroke="var(--steel-2)" stroke-width="1.5"/>
+        <polygon points="100,36 93,32 93,40" fill="var(--steel-2)"/>
+        <rect x="102" y="23" width="66" height="26" rx="8" fill="var(--card)" stroke="var(--line)"/>
+        <text x="135" y="40" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="var(--steel)">UPSCALE</text>
+        <line x1="170" y1="36" x2="198" y2="36" stroke="var(--steel-2)" stroke-width="1.5"/>
+        <polygon points="198,36 191,32 191,40" fill="var(--steel-2)"/>
+        <rect x="200" y="23" width="56" height="26" rx="8" fill="var(--tint)" stroke="var(--steel)"/>
+        <text x="228" y="40" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="var(--steel)">AJUSTE</text>
+      </svg>
+      <p>La cadena de pasos que se encadenan para producir una pieza de contenido —por ejemplo generar una imagen, escalarla, ajustarla— hasta llegar a un resultado publicable.</p>
+    </div>
+    <div class="def">
+      <span class="def-term">Producción (entorno)</span>
+      <svg class="def-mini" viewBox="0 0 260 72" role="img" aria-label="De un entorno de prueba interno al entorno de producción real">
+        <rect x="10" y="23" width="108" height="26" rx="8" fill="var(--card)" stroke="var(--line)"/>
+        <text x="64" y="40" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="var(--steel)">PRUEBA</text>
+        <line x1="122" y1="36" x2="140" y2="36" stroke="var(--steel-2)" stroke-width="1.5"/>
+        <polygon points="140,36 133,32 133,40" fill="var(--steel-2)"/>
+        <rect x="142" y="23" width="108" height="26" rx="8" fill="var(--tint)" stroke="var(--steel)"/>
+        <text x="196" y="40" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="var(--steel)">PRODUCCIÓN</text>
+      </svg>
+      <p>El entorno real y en vivo donde corre lo que ven los clientes, a diferencia de una versión de prueba interna donde se puede romper algo sin consecuencias.</p>
+    </div>
+    <div class="def">
+      <span class="def-term">Prompt</span>
+      <p>La instrucción que se le escribe al modelo para pedirle algo. Uno específico, con el contexto y el resultado esperado bien claros, rinde más que uno simplemente largo.</p>
+    </div>
+    <div class="def">
+      <span class="def-term">Proyecto (en Claude)</span>
+      <svg class="def-mini" viewBox="0 0 260 72" role="img" aria-label="Una carpeta de proyecto que agrupa brief, tono y chats">
+        <rect x="20" y="8" width="70" height="10" rx="4" fill="var(--steel-2)"/>
+        <rect x="20" y="16" width="220" height="48" rx="8" fill="var(--card)" stroke="var(--steel-2)"/>
+        <text x="130" y="45" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="var(--steel)">BRIEF · TONO · CHATS</text>
+      </svg>
+      <p>Un espacio que agrupa contexto por tema o cliente, con instrucciones propias cargadas una sola vez, que mejoran automáticamente todo lo que se pida ahí adentro.</p>
+    </div>
+    <div class="def">
+      <span class="def-term">Repositorio</span>
+      <svg class="def-mini" viewBox="0 0 260 72" role="img" aria-label="Un repositorio que contiene el código y su historial de cambios">
+        <rect x="10" y="10" width="240" height="52" rx="8" fill="var(--card)" stroke="var(--line)"/>
+        <rect x="24" y="26" width="92" height="24" rx="8" fill="var(--tint)" stroke="var(--steel)"/>
+        <text x="70" y="42" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="8.5" fill="var(--steel)">CÓDIGO</text>
+        <rect x="140" y="26" width="100" height="24" rx="8" fill="var(--tint)" stroke="var(--steel)"/>
+        <text x="190" y="42" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="8.5" fill="var(--steel)">HISTORIAL</text>
+      </svg>
+      <p>El lugar donde vive el código de un proyecto, junto con todo su historial de cambios registrado en Git.</p>
+    </div>
+    <div class="def">
+      <span class="def-term">Skill</span>
+      <p>Una capacidad de Claude orientada a un formato concreto de entregable —documentos, planillas, presentaciones, entre otros— que mejora el resultado final en ese formato específico.</p>
+    </div>
+    <div class="def">
+      <span class="def-term">Upscale</span>
+      <svg class="def-mini" viewBox="0 0 260 72" role="img" aria-label="Una imagen chica que se agranda y gana detalle">
+        <rect x="14" y="30" width="30" height="20" rx="6" fill="var(--card)" stroke="var(--line)"/>
+        <line x1="50" y1="40" x2="108" y2="40" stroke="var(--steel-2)" stroke-width="1.5"/>
+        <polygon points="108,40 101,36 101,44" fill="var(--steel-2)"/>
+        <rect x="112" y="12" width="134" height="48" rx="8" fill="var(--tint)" stroke="var(--steel)"/>
+        <text x="179" y="32" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="var(--steel)">MÁS</text>
+        <text x="179" y="46" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" fill="var(--steel)">DETALLE</text>
+      </svg>
+      <p>El proceso de aumentar la resolución o calidad de una imagen o un video ya generado, sin tener que rehacerlo desde cero.</p>
+    </div>
+    <div class="def">
+      <span class="def-term">Vibe coding</span>
+      <svg class="def-mini" viewBox="0 0 260 72" role="img" aria-label="Texto en castellano que se convierte en una app funcionando">
+        <rect x="6" y="14" width="106" height="44" rx="8" fill="var(--card)" stroke="var(--line)"/>
+        <text x="59" y="32" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="8.5" fill="var(--steel)">TEXTO EN</text>
+        <text x="59" y="46" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="8.5" fill="var(--steel)">CASTELLANO</text>
+        <line x1="116" y1="36" x2="144" y2="36" stroke="var(--steel-2)" stroke-width="1.5"/>
+        <polygon points="144,36 137,32 137,40" fill="var(--steel-2)"/>
+        <rect x="148" y="14" width="106" height="44" rx="8" fill="var(--tint)" stroke="var(--steel)"/>
+        <text x="201" y="32" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="8.5" fill="var(--steel)">APP</text>
+        <text x="201" y="46" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="8.5" fill="var(--steel)">FUNCIONANDO</text>
+      </svg>
+      <p>Dirigir la construcción de un programa describiendo en lenguaje natural el resultado que se busca, sin escribir el código línea por línea.</p>
+    </div>
+  </div>
+</section>
+<section class="sec" id="s11" aria-labelledby="h-s11">
+  <header class="sec-head reveal">
+    <span class="sec-mark">Sección 11</span>
+    <h2 id="h-s11">Caja de herramientas: plantillas listas para usar</h2>
+    <p class="sec-lede">Recursos para ejecutar tareas reales hoy: copiá, completá los campos entre corchetes y pegá.</p>
+  </header>
+
+  <div class="prose reveal">
+    <p>Cada plantilla de abajo salió de iterar hasta que anduvo, no de la teoría. Usalas así: reemplazá los
+    [CAMPOS] por los datos reales de la pieza o la operación, adjuntá siempre las fotos de producto reales
+    cuando la plantilla lo pida (una joya que no viste no la puede respetar), y revisá el resultado contra
+    las reglas de la Sección 06.1 antes de publicar o ejecutar nada. Ningún prompt reemplaza esa revisión.</p>
+    <ul>
+      <li>Los prompts de imagen y video están pensados para motores tipo Nano Banana, Flux, Kling, Veo,
+      Higgsfield y Magnific — la estructura sirve igual si cambiás de herramienta.</li>
+      <li>Los de Shopify están listos para pegar en el chat con el conector conectado.</li>
+      <li>Los de negocio son para chat o Cowork, sin conectores.</li>
+    </ul>
+  </div>
+
+  <article class="resource reveal">
+    <header class="resource-head">
+      <h3>Persistencia de producto en imagen de campaña</h3>
+      <p class="resource-when">Usala para fotoproducto o editorial de campaña donde la pieza tiene que ser
+      exactamente la real, no una interpretación.</p>
+    </header>
+    <figure class="prompt-box" data-copy>
+      <figcaption>Plantilla — campaña con fidelidad de producto</figcaption>
+      <pre>[FOTOS DE REFERENCIA ADJUNTAS: 2-3 ángulos de la pieza real,
+buena luz, sin edición]
+
+Genera una foto de campaña de lujo usando EXACTAMENTE la joya
+de las fotos de referencia adjuntas: [NOMBRE DE LA PIEZA],
+colección [COLECCIÓN].
+
+Fidelidad de diseño total: no inventes ni alteres la pieza.
+No cambies la forma, el grosor, el largo de cadena ni la
+proporción. No agregues grabados, texturas o partes que no
+están en la referencia. Conservá cada detalle: cierres,
+eslabones, engarces, brillo del metal.
+
+Escena: [DESCRIBIR ESCENA — ej. "fondo infinito negro,
+superficie de mármol frío, sin utilería"].
+Luz: [DESCRIBIR LUZ — ej. "luz de estudio frontal suave,
+reflejos controlados, sin sobreexposición"].
+Escala: tamaño realista de joya de catálogo, no sobredimensionar.
+
+Negative prompt: distorsión, cambio de forma, elementos
+inventados, escala incorrecta, look plástico de CGI, brillos
+quemados, joya deformada, fondo desordenado.</pre>
+    </figure>
+    <p class="resource-tip">Si la pieza sale deformada o con partes que no tiene, subí el peso de la
+    referencia en el motor o bajá la libertad creativa de la escena — el problema casi nunca es la luz,
+    es cuánto se le permite "reinterpretar" al modelo.</p>
+  </article>
+
+  <article class="resource reveal">
+    <header class="resource-head">
+      <h3>Persistencia con logo o identidad de marca</h3>
+      <p class="resource-when">Usala para piezas gráficas donde tiene que aparecer la identidad de 0800
+      (empaque, tarjeta, sticker) pero el logo NO se genera con IA.</p>
+    </header>
+    <figure class="prompt-box" data-copy>
+      <figcaption>Plantilla — espacio limpio para logo real</figcaption>
+      <pre>Genera [TIPO DE PIEZA — ej. "una tarjeta de agradecimiento
+para el packaging"] para la marca 0800 (Don Rouch), joyería
+de plata, estética underground.
+
+Reglá el diseño para dejar un área limpia, sin texto ni
+elementos gráficos, de [UBICACIÓN Y TAMAÑO — ej. "6x6 cm
+centrada arriba"], destinada a incrustar el logo real en
+edición posterior. No generes ningún monograma, sello,
+inicial ni forma que pueda confundirse con un logo: esa
+zona queda vacía o con un placeholder neutro (ej. un
+rectángulo con guía de márgenes).
+
+Estilo: [PALETA Y MATERIAL — ej. "papel gris frío, tinta
+plata, tipografía sobria"]. Composición: [DESCRIBIR].
+
+Negative prompt: logos inventados, monogramas, sellos,
+texto ilegible, marcas de agua, símbolos ambiguos en el
+área reservada.</pre>
+    </figure>
+    <p class="resource-tip">El logo real (el monograma) se incrusta después en edición manual o con la
+    herramienta de diseño — nunca se le pide a un generador de imagen que lo dibuje, porque nunca va a
+    salir idéntico dos veces.</p>
+  </article>
+
+  <article class="resource reveal">
+    <header class="resource-head">
+      <h3>Video corto de producto sin morphing</h3>
+      <p class="resource-when">Usala para reels o clips cortos de producto en Higgsfield, Kling o Veo,
+      cuando la pieza tiene que verse idéntica en todos los frames.</p>
+    </header>
+    <figure class="prompt-box" data-copy>
+      <figcaption>Plantilla — video de producto, cámara segura</figcaption>
+      <pre>[FOTO DE REFERENCIA ADJUNTA: la pieza real, un solo ángulo
+claro y bien iluminado]
+
+Video de campaña de [NOMBRE DE LA PIEZA], duración
+[DURACIÓN — ej. "6 segundos"].
+
+Regla de persistencia: la joya es un objeto rígido clavado
+al set. En cada frame es exactamente el mismo objeto físico
+— misma forma, mismo brillo, mismos detalles — como si fuera
+un prop fijo siendo filmado. Nunca muta, nunca gira sobre sí
+misma, nunca aparece una versión alternativa.
+
+Cámara: usá solo movimientos seguros — [ELEGIR UNO O DOS:
+"push-in lento", "parallax lateral suave", "elevación
+suave", "rack focus"]. Prohibido: órbitas, giros completos
+o cambios de ángulo que obliguen a inventar caras de la
+pieza que la referencia no muestra.
+
+Luz: [DESCRIBIR — ej. "barrido de luz suave sobre el metal
+pulido, brillo de piedra orgánico, sin destello artificial"].
+Todo el movimiento de la escena va al mundo alrededor (luz,
+fondo, partículas), nunca al objeto.
+
+Negative prompt: inconsistencia entre frames, objeto
+mutando, morphing, superficie con glitch, movimiento no
+natural de la pieza.</pre>
+    </figure>
+    <p class="resource-tip">Si la joya "respira" o cambia de forma en el video, el problema casi siempre
+    es el movimiento de cámara pedido: un giro orbital obliga al modelo a inventar los lados que la foto
+    de referencia nunca mostró, y ahí la redibuja a su gusto. Cambiá a push-in o parallax y se corrige.</p>
+  </article>
+
+  <article class="resource reveal">
+    <header class="resource-head">
+      <h3>Upscale y limpieza para impresión</h3>
+      <p class="resource-when">Usala antes de mandar una imagen a imprenta (catálogo, cartelería, packaging)
+      o cuando una foto de producto salió con ruido o baja resolución.</p>
+    </header>
+    <figure class="prompt-box" data-copy>
+      <figcaption>Plantilla — upscale sin alterar la pieza (Magnific)</figcaption>
+      <pre>[IMAGEN ADJUNTA: la foto de producto a mejorar]
+
+Mejorá la resolución y nitidez de esta imagen para uso en
+impresión ([TAMAÑO FINAL — ej. "A4" o "catálogo 20x20 cm"]).
+
+No reinterpretes ni rediseñes la pieza: conservá exactamente
+la forma, el brillo del metal, los engarces y el fondo
+originales. El objetivo es más nitidez y detalle real, no
+una versión "creativa" distinta.
+
+Nivel de creatividad: mínimo. Prioridad: fidelidad sobre
+la referencia, no invención de textura nueva.
+
+Negative prompt: cambio de forma, textura inventada, detalles
+nuevos que no estaban en el original, artefactos de piel o
+metal irreal.</pre>
+    </figure>
+    <p class="resource-tip">Si el upscale "mejora" de más y la pieza deja de parecerse a la original, bajá
+    el nivel de creatividad del modo de upscale antes que subir la resolución — son controles separados.</p>
+  </article>
+
+  <article class="resource reveal">
+    <header class="resource-head">
+      <h3>Consulta de ventas o stock en Shopify</h3>
+      <p class="resource-when">Usala para pedir un análisis o listado antes de decidir algo — es de solo
+      lectura, no cambia nada en la tienda.</p>
+    </header>
+    <figure class="prompt-box" data-copy>
+      <figcaption>Plantilla — análisis de ventas o stock</figcaption>
+      <pre>Listame los productos de la colección [COLECCIÓN] con stock
+menor a [NÚMERO] unidades.
+
+Para cada uno mostrame: nombre, stock actual, precio y
+unidades vendidas en los últimos [PERÍODO — ej. "30 días"].
+
+Ordená el resultado de menor a mayor stock y marcá cuáles
+son los que más rotan, para priorizar reposición.</pre>
+    </figure>
+    <p class="resource-tip">Podés pedir la misma estructura para "productos sin ventas en X días" o
+    "top 10 por ingresos" cambiando solo la condición del filtro.</p>
+  </article>
+
+  <article class="resource reveal">
+    <header class="resource-head">
+      <h3>Operación de Shopify con cambios reales (dos tiempos)</h3>
+      <p class="resource-when">Usala para cualquier acción que modifique la tienda: precios, descuentos,
+      estado de productos, inventario. Nunca se ejecuta en un solo paso.</p>
+    </header>
+    <figure class="prompt-box" data-copy>
+      <figcaption>Plantilla — mutación con plan antes de ejecutar</figcaption>
+      <pre>Quiero [DESCRIBIR EL CAMBIO — ej. "aplicar un 20% de
+descuento a todos los productos de la colección Cadenas
+con stock menor a 3 unidades"].
+
+Antes de tocar nada: mostrame el plan completo — qué
+productos se van a modificar, con qué valores antes y
+después, y cuántos son en total.
+
+No ejecutes nada todavía. Esperá mi confirmación explícita
+después de ver el plan.</pre>
+    </figure>
+    <p class="resource-tip">Este protocolo de dos tiempos es obligatorio (Sección 06.1): primero el plan,
+    después el "dale, ejecutá" tuyo por escrito. Ninguna mutación se corre sin ese segundo mensaje.</p>
+  </article>
+
+  <article class="resource reveal">
+    <header class="resource-head">
+      <h3>Estresar una idea de negocio</h3>
+      <p class="resource-when">Usala en chat cuando tenés una idea a medio cocinar y necesitás que alguien
+      te haga las preguntas incómodas antes de invertir tiempo o plata.</p>
+    </header>
+    <figure class="prompt-box" data-copy>
+      <figcaption>Plantilla — presión sobre una idea</figcaption>
+      <pre>Tengo esta idea: [DESCRIBIR LA IDEA EN 3-4 LÍNEAS].
+
+Actuá como un socio exigente, no como un porrista. Hacé
+como mínimo 5 preguntas incómodas que yo debería poder
+responder antes de avanzar (costos reales, por qué ahora,
+qué pasa si el proveedor falla, quién es exactamente el
+cliente, qué la hace distinta de lo que ya existe).
+
+Después de las preguntas, decime en una frase cuál es el
+riesgo más grande que le ves a esto tal como está planteado.</pre>
+    </figure>
+    <p class="resource-tip">Pedile explícitamente que no sea complaciente — sin esa instrucción, tiende
+    a validar la idea en vez de presionarla.</p>
+  </article>
+
+  <article class="resource reveal">
+    <header class="resource-head">
+      <h3>De brief a propuesta para vender un proyecto</h3>
+      <p class="resource-when">Usala en chat o Cowork cuando tenés notas sueltas de una reunión y necesitás
+      convertirlas en una propuesta presentable.</p>
+    </header>
+    <figure class="prompt-box" data-copy>
+      <figcaption>Plantilla — brief a propuesta</figcaption>
+      <pre>Estas son mis notas crudas de una reunión con
+[NOMBRE DEL CLIENTE O PROYECTO]: [PEGAR NOTAS, AUNQUE ESTÉN
+DESORDENADAS].
+
+Convertí esto en una propuesta corta y concreta, con esta
+estructura: problema del cliente en sus propias palabras,
+qué le proponemos hacer, cómo lo vamos a ejecutar en pasos,
+qué necesitamos de su lado, y un cierre con el próximo paso
+claro.
+
+Tono: directo, sin relleno, sin adjetivos vacíos. Máximo
+una página.</pre>
+    </figure>
+    <p class="resource-tip">Si el brief es largo o viene de varias fuentes (mail, notas, audio
+    transcripto), pedile primero que te devuelva los puntos clave sueltos para validar que no se perdió
+    nada, y recién después que arme la propuesta.</p>
+  </article>
+
+  <aside class="note reveal">
+    <span class="note-label">Nota</span>
+    <p>Estas plantillas son un punto de partida vivo, no una versión final. Cuando alguien encuentre una
+    variante que funcione mejor —una frase que evite mejor la deformación de una piedra, un orden de
+    cámara que ande más rápido en un motor nuevo— se actualiza esta sección. No son un dogma, son lo que
+    hoy nos da mejores resultados.</p>
+  </aside>
+</section>
+  </div><!-- /#contenido -->
+</main>
+
+<footer class="footer" role="contentinfo">
+  <div class="wrap">
+    <p><b>0800</b> · Documento de formación interna — preparado por <b>Nicolás Minahk / 33Brains</b></p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  'use strict';
+  document.documentElement.classList.add('js');
+
+  /* ---- barra de progreso de lectura ---- */
+  var bar = document.getElementById('progress-bar');
+  function paint(){
+    var doc = document.documentElement;
+    var max = doc.scrollHeight - window.innerHeight;
+    var p = max > 0 ? (window.scrollY / max) * 100 : 0;
+    bar.style.width = Math.min(100, Math.max(0, p)) + '%';
+  }
+  window.addEventListener('scroll', paint, {passive:true});
+  window.addEventListener('resize', paint, {passive:true});
+  paint();
+
+  /* ---- reveal por IntersectionObserver, con stagger suave ---- */
+  var revealables = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(entries){
+      var visible = entries.filter(function(e){ return e.isIntersecting; });
+      visible.forEach(function(e, i){
+        e.target.style.transitionDelay = Math.min(i * 70, 280) + 'ms';
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      });
+    }, {rootMargin:'0px 0px -8% 0px', threshold:0.05});
+    revealables.forEach(function(el){ io.observe(el); });
+  } else {
+    revealables.forEach(function(el){ el.classList.add('in'); });
+  }
+
+  /* ---- botón Copiar en cada prompt ---- */
+  function copyText(text, btn){
+    function done(){
+      btn.classList.add('done');
+      btn.textContent = 'Copiado ✓';
+      setTimeout(function(){
+        btn.classList.remove('done');
+        btn.textContent = 'Copiar';
+      }, 1600);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(done, function(){ fallback(); });
+    } else { fallback(); }
+    function fallback(){
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); done(); } catch(e){}
+      document.body.removeChild(ta);
+    }
+  }
+  document.querySelectorAll('.prompt-box').forEach(function(box){
+    var pre = box.querySelector('pre');
+    if (!pre) return;
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'copy-btn';
+    btn.textContent = 'Copiar';
+    btn.setAttribute('aria-label', 'Copiar este prompt al portapapeles');
+    btn.addEventListener('click', function(){ copyText(pre.textContent.trim(), btn); });
+    box.appendChild(btn);
+  });
+
+  /* ---- motor de quiz ---- */
+  document.querySelectorAll('[data-quiz]').forEach(function(quiz){
+    var questions = Array.prototype.slice.call(quiz.querySelectorAll('[data-q]'));
+    var scoreBox = quiz.querySelector('[data-score]');
+    var answered = 0, correct = 0;
+
+    function verdict(c, t){
+      if (c === t) return '¡Impecable! Seguí a la próxima sección.';
+      if (c >= t - 1) return 'Muy bien. Releé el punto que fallaste y seguí.';
+      return 'Vale la pena releer la sección antes de seguir.';
+    }
+
+    function showScore(){
+      scoreBox.innerHTML = '';
+      var txt = document.createElement('span');
+      txt.className = 'qs-txt';
+      txt.innerHTML = 'RESULTADO — <b>' + correct + '/' + questions.length +
+        ' correctas</b> · ' + verdict(correct, questions.length);
+      var retry = document.createElement('button');
+      retry.type = 'button';
+      retry.className = 'quiz-retry';
+      retry.textContent = 'Reintentar';
+      retry.addEventListener('click', reset);
+      scoreBox.appendChild(txt);
+      scoreBox.appendChild(retry);
+      scoreBox.hidden = false;
+    }
+
+    function reset(){
+      answered = 0; correct = 0;
+      scoreBox.hidden = true;
+      questions.forEach(function(q){
+        q.classList.remove('is-locked');
+        var ex = q.querySelector('.quiz-explain');
+        if (ex) ex.hidden = true;
+        q.querySelectorAll('.quiz-opt').forEach(function(o){
+          o.disabled = false;
+          o.classList.remove('is-correct','is-wrong','is-reveal');
+        });
+      });
+      quiz.scrollIntoView({behavior:'smooth', block:'start'});
+    }
+
+    questions.forEach(function(q){
+      var ex = q.querySelector('.quiz-explain');
+      if (ex) ex.setAttribute('aria-live','polite');
+      q.querySelectorAll('.quiz-opt').forEach(function(btn){
+        btn.addEventListener('click', function(){
+          if (q.classList.contains('is-locked')) return;
+          q.classList.add('is-locked');
+          var good = btn.hasAttribute('data-correct');
+          btn.classList.add(good ? 'is-correct' : 'is-wrong');
+          if (!good){
+            var real = q.querySelector('[data-correct]');
+            if (real) real.classList.add('is-reveal');
+          }
+          q.querySelectorAll('.quiz-opt').forEach(function(o){ o.disabled = true; });
+          if (ex) ex.hidden = false;
+          answered++; if (good) correct++;
+          if (answered === questions.length) showScore();
+        });
+      });
+    });
+
+    if (scoreBox) scoreBox.setAttribute('aria-live','polite');
+  });
+})();
+
+</script>
+</body>
+</html>
