@@ -46,7 +46,7 @@
   :root{--tint-ink:color-mix(in srgb,var(--tint) 74%, var(--ink))}
 }
 /* acentos por sección */
-#s00{--tint:#007AFF} #s01{--tint:#5856D6} #s02{--tint:#32ADE6} #s03{--tint:#AF52DE}
+#s00{--tint:#007AFF} #s01{--tint:#5856D6} #s02{--tint:#32ADE6} #s02-1{--tint:#5AC8FA} #s03{--tint:#AF52DE}
 #s04{--tint:#FF9500} #s05{--tint:#34C759} #s06{--tint:#FF2D55} #s06-1{--tint:#FF3B30}
 #s07{--tint:#00C7BE} #s08{--tint:#FF9F0A} #s09{--tint:#0A84FF} #s10{--tint:#5E5CE6}
 #s11{--tint:#30B0C7}
@@ -176,7 +176,7 @@ main{padding-top:var(--head-h)}
 .toc a:hover{background:rgba(255,255,255,.9);transform:translateX(4px)}
 .toc .n{font-family:var(--mono);font-size:.76rem;font-weight:600;flex:none;width:2.3rem}
 .toc a[href="#s00"] .n{color:#007AFF}.toc a[href="#s01"] .n{color:#5856D6}
-.toc a[href="#s02"] .n{color:#32ADE6}.toc a[href="#s03"] .n{color:#AF52DE}
+.toc a[href="#s02"] .n{color:#32ADE6}.toc a[href="#s02-1"] .n{color:#5AC8FA}.toc a[href="#s03"] .n{color:#AF52DE}
 .toc a[href="#s04"] .n{color:#FF9500}.toc a[href="#s05"] .n{color:#34C759}
 .toc a[href="#s06"] .n{color:#FF2D55}.toc a[href="#s06-1"] .n{color:#FF3B30}
 .toc a[href="#s07"] .n{color:#00C7BE}.toc a[href="#s08"] .n{color:#FF9F0A}
@@ -361,6 +361,10 @@ table.data td:first-child{font-weight:600;color:var(--ink)}
   font-family:var(--mono);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;
   color:var(--muted);padding:.75rem .2rem 0;border-top:1px solid var(--line);margin-top:.95rem;
 }
+
+.ui-shot{margin:1.8rem 0}
+.ui-shot img{display:block;width:100%;height:auto;border-radius:var(--r-lg);border:1px solid var(--line-2);box-shadow:var(--shadow)}
+.ui-shot figcaption{font-family:var(--mono);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:.7rem .2rem 0}
 
 /* ---------- recursos ---------- */
 .resource{
@@ -563,6 +567,7 @@ table.data td:first-child{font-weight:600;color:var(--ink)}
       <li><a href="#s00"><span class="n">00</span><span class="t">Objeto y alcance</span><span class="dots"></span></a></li>
       <li><a href="#s01"><span class="n">01</span><span class="t">Marco conceptual mínimo</span><span class="dots"></span><span class="chk">Checkpoint</span></a></li>
       <li><a href="#s02"><span class="n">02</span><span class="t">La plataforma Claude hoy</span><span class="dots"></span></a></li>
+      <li class="sub"><a href="#s02-1"><span class="n">02.1</span><span class="t">La interfaz: dónde está cada cosa</span><span class="dots"></span></a></li>
       <li><a href="#s03"><span class="n">03</span><span class="t">Vibe coding aplicado a negocio</span><span class="dots"></span><span class="chk">Checkpoint</span></a></li>
       <li><a href="#s04"><span class="n">04</span><span class="t">Flujo de trabajo y trazabilidad</span><span class="dots"></span></a></li>
       <li><a href="#s05"><span class="n">05</span><span class="t">MCP Shopify: operar la tienda</span><span class="dots"></span><span class="chk">Checkpoint</span></a></li>
@@ -788,6 +793,159 @@ table.data td:first-child{font-weight:600;color:var(--ink)}
     <p>Un conector directo es una integración ya empaquetada, que se activa desde la configuración de Claude con un paso simple y queda mantenida por quien la ofrece. Un MCP —<em>Model Context Protocol</em>— es un protocolo abierto: permite conectar prácticamente cualquier herramienta, incluidas las propias de 0800, siempre que alguien la exponga con ese protocolo.</p>
     <p>Para el uso diario de 0800 la diferencia entre uno y otro es más técnica que práctica: en los dos casos el resultado es el mismo, Claude puede consultar y operar sobre esa herramienta externa dentro de la conversación. Lo que cambia es quién la mantiene y cómo se configuró, no lo que Roque nota al usarla.</p>
   </div>
+</section>
+<section class="sec" id="s02-1" aria-labelledby="h-s02-1">
+  <header class="sec-head reveal">
+    <span class="sec-mark">Sección 02.1</span>
+    <h2 id="h-s02-1">La interfaz: dónde está cada cosa</h2>
+    <p class="sec-lede">Un mapa visual para no perderse la primera semana: dónde viven los Proyectos, los conectores, las skills y Cowork.</p>
+  </header>
+
+  <div class="prose reveal">
+    <p>Antes de tocar nada conviene saber dónde está cada cosa. Los cuatro esquemas de abajo muestran las mismas pantallas que vas a usar todos los días, con números que señalan qué es cada elemento.</p>
+  </div>
+
+  <aside class="note reveal">
+    <span class="note-label">Nota</span>
+    <p>Estos son esquemas simplificados, no capturas literales de la aplicación. La interfaz cambia de versión en versión, pero los nombres se mantienen: si algo no coincide exactamente con lo que ves en pantalla, buscá "Proyectos", "Conectores" o "Skills" por nombre.</p>
+  </aside>
+
+  <figure class="diagram reveal">
+    <svg viewBox="0 0 720 380" role="img" aria-label="Esquema de la ventana principal de Claude, con sidebar izquierda mostrando Nuevo chat, Chats, Proyectos y Artefactos, y área principal con mensaje de bienvenida y compositor de mensajes con controles de adjuntar, herramientas, Cowork y selector de modelo">
+      <defs>
+        <clipPath id="winclipA">
+          <rect x="10" y="10" width="700" height="360" rx="14"/>
+        </clipPath>
+      </defs>
+
+      <rect x="10" y="10" width="700" height="360" rx="14" fill="var(--card)" stroke="var(--line-2)" stroke-width="1.5"/>
+      <rect x="10" y="10" width="700" height="26" fill="var(--paper-2)" clip-path="url(#winclipA)"/>
+      <circle cx="26" cy="23" r="4" fill="var(--line-2)"/>
+      <circle cx="42" cy="23" r="4" fill="var(--line-2)"/>
+      <circle cx="58" cy="23" r="4" fill="var(--line-2)"/>
+      <text x="360" y="27" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" letter-spacing="1" fill="var(--muted)">CLAUDE</text>
+
+      <rect x="10" y="36" width="170" height="334" fill="var(--paper-2)" clip-path="url(#winclipA)"/>
+      <line x1="180" y1="36" x2="180" y2="370" stroke="var(--line)" stroke-width="1"/>
+
+      <text x="28" y="64" font-family="'IBM Plex Sans', sans-serif" font-size="11" fill="var(--ink-2)">+ Nuevo chat</text>
+      <text x="28" y="94" font-family="'IBM Plex Sans', sans-serif" font-size="11" fill="var(--ink-2)">Chats</text>
+      <rect x="18" y="106" width="152" height="24" rx="6" fill="var(--card)" stroke="var(--line)" stroke-width="1"/>
+      <text x="28" y="123" font-family="'IBM Plex Sans', sans-serif" font-size="11" fill="var(--ink)">Proyectos</text>
+      <text x="28" y="154" font-family="'IBM Plex Sans', sans-serif" font-size="11" fill="var(--ink-2)">Artefactos</text>
+
+      <line x1="152" y1="118" x2="163" y2="118" stroke="var(--tint)" stroke-width="1.5"/>
+      <circle cx="163" cy="118" r="11" fill="var(--tint)"/>
+      <text x="163" y="122" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="11" font-weight="bold" fill="#fff">1</text>
+
+      <text x="450" y="145" text-anchor="middle" font-family="'IBM Plex Sans', sans-serif" font-size="20" fill="var(--ink)">¿En qué trabajamos hoy?</text>
+
+      <rect x="210" y="270" width="480" height="80" rx="12" fill="var(--paper-2)" stroke="var(--line)" stroke-width="1"/>
+      <text x="230" y="298" font-family="'IBM Plex Sans', sans-serif" font-size="12" fill="var(--muted)">Escribí acá…</text>
+
+      <circle cx="232" cy="332" r="10" fill="none" stroke="var(--line-2)" stroke-width="1.5"/>
+      <line x1="227" y1="332" x2="237" y2="332" stroke="var(--line-2)" stroke-width="1.5"/>
+      <line x1="232" y1="327" x2="232" y2="337" stroke="var(--line-2)" stroke-width="1.5"/>
+
+      <line x1="266" y1="322" x2="266" y2="328" stroke="var(--line-2)" stroke-width="1.5"/>
+      <circle cx="266" cy="328" r="2" fill="var(--line-2)"/>
+      <line x1="256" y1="328" x2="276" y2="328" stroke="var(--line-2)" stroke-width="1.5"/>
+      <line x1="282" y1="336" x2="282" y2="342" stroke="var(--line-2)" stroke-width="1.5"/>
+      <circle cx="282" cy="336" r="2" fill="var(--line-2)"/>
+      <line x1="272" y1="336" x2="292" y2="336" stroke="var(--line-2)" stroke-width="1.5"/>
+
+      <line x1="274" y1="312" x2="274" y2="320" stroke="var(--tint)" stroke-width="1.5"/>
+      <circle cx="274" cy="308" r="11" fill="var(--tint)"/>
+      <text x="274" y="312" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="11" font-weight="bold" fill="#fff">2</text>
+
+      <rect x="315" y="320" width="90" height="24" rx="12" fill="var(--steel)" stroke="var(--steel-2)" stroke-width="1"/>
+      <text x="360" y="336" text-anchor="middle" font-family="'IBM Plex Sans', sans-serif" font-size="11" fill="var(--card)">Cowork</text>
+      <line x1="360" y1="310" x2="360" y2="318" stroke="var(--tint)" stroke-width="1.5"/>
+      <circle cx="360" cy="306" r="11" fill="var(--tint)"/>
+      <text x="360" y="310" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="11" font-weight="bold" fill="#fff">3</text>
+
+      <rect x="610" y="320" width="70" height="24" rx="12" fill="var(--card)" stroke="var(--line-2)" stroke-width="1"/>
+      <text x="645" y="336" text-anchor="middle" font-family="'IBM Plex Sans', sans-serif" font-size="11" fill="var(--ink)">Claude ▾</text>
+      <line x1="645" y1="310" x2="645" y2="318" stroke="var(--tint)" stroke-width="1.5"/>
+      <circle cx="645" cy="306" r="11" fill="var(--tint)"/>
+      <text x="645" y="310" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="11" font-weight="bold" fill="#fff">4</text>
+    </svg>
+    <figcaption>Esquema 1. Claude: la ventana principal.</figcaption>
+  </figure>
+
+  <div class="prose reveal">
+    <ol>
+      <li><strong>1</strong> Proyectos: acá se crea el Proyecto de 0800 con las instrucciones de marca.</li>
+      <li><strong>2</strong> Herramientas y conectores: acá se ve qué conectores (Shopify, Higgsfield, Magnific) están activos para esta conversación.</li>
+      <li><strong>3</strong> Cowork: el modo agéntico se invoca desde la misma ventana de chat.</li>
+      <li><strong>4</strong> Selector de modelo.</li>
+    </ol>
+  </div>
+
+  <figure class="ui-shot reveal">
+    <img src="capturas/02-conectores.png" alt="Captura real de la configuración de Claude: sección Conectores con las herramientas conectadas de la cuenta" loading="lazy">
+    <figcaption>Captura — Configuración → Conectores, en la cuenta real.</figcaption>
+  </figure>
+
+  <div class="prose reveal">
+    <p>En la captura: la sección Conectores dentro de la configuración. Desde acá se conectan, desconectan y agregan las herramientas externas (los MCP) que después aparecen disponibles en la conversación.</p>
+  </div>
+
+  <figure class="diagram reveal">
+    <svg viewBox="0 0 720 320" role="img" aria-label="Esquema de una conversación donde el usuario pide una planilla de stock y la respuesta muestra una insignia de Skill de Planillas sobre una tarjeta de archivo llamado stock-cadenas.xlsx">
+      <defs>
+        <clipPath id="winclipC">
+          <rect x="10" y="10" width="700" height="300" rx="14"/>
+        </clipPath>
+      </defs>
+
+      <rect x="10" y="10" width="700" height="300" rx="14" fill="var(--card)" stroke="var(--line-2)" stroke-width="1.5"/>
+      <rect x="10" y="10" width="700" height="26" fill="var(--paper-2)" clip-path="url(#winclipC)"/>
+      <circle cx="26" cy="23" r="4" fill="var(--line-2)"/>
+      <circle cx="42" cy="23" r="4" fill="var(--line-2)"/>
+      <circle cx="58" cy="23" r="4" fill="var(--line-2)"/>
+      <text x="360" y="27" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="9" letter-spacing="1" fill="var(--muted)">CLAUDE</text>
+
+      <rect x="380" y="56" width="310" height="52" rx="12" fill="var(--paper-2)" stroke="var(--line)" stroke-width="1"/>
+      <text x="670" y="76" text-anchor="end" font-family="'IBM Plex Sans', sans-serif" font-size="11" fill="var(--ink)">Armame la planilla de stock de</text>
+      <text x="670" y="93" text-anchor="end" font-family="'IBM Plex Sans', sans-serif" font-size="11" fill="var(--ink)">la colección Cadenas</text>
+
+      <rect x="40" y="142" width="150" height="24" rx="12" fill="var(--steel)"/>
+      <text x="115" y="158" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="10" font-weight="bold" letter-spacing="0.5" fill="var(--card)">SKILL · PLANILLAS</text>
+      <circle cx="187" cy="142" r="11" fill="var(--tint)"/>
+      <text x="187" y="146" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="11" font-weight="bold" fill="#fff">1</text>
+
+      <rect x="40" y="182" width="200" height="100" rx="4" fill="var(--card)" stroke="var(--line-2)" stroke-width="1.5"/>
+      <path d="M 220 182 L 240 182 L 240 202 Z" fill="var(--paper-2)" stroke="var(--line-2)" stroke-width="1"/>
+      <line x1="56" y1="212" x2="224" y2="212" stroke="var(--line)" stroke-width="1"/>
+      <text x="56" y="234" font-family="'IBM Plex Mono', monospace" font-size="11" fill="var(--ink)">stock-cadenas.xlsx</text>
+      <text x="56" y="256" font-family="'IBM Plex Sans', sans-serif" font-size="10" fill="var(--muted)">Listo para descargar</text>
+      <circle cx="247" cy="192" r="11" fill="var(--tint)"/>
+      <text x="247" y="196" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="11" font-weight="bold" fill="#fff">2</text>
+    </svg>
+    <figcaption>Esquema 2. Skills: capacidades por formato.</figcaption>
+  </figure>
+
+  <div class="prose reveal">
+    <ol>
+      <li><strong>1</strong> La skill se activa sola cuando el pedido es de ese formato (documentos, planillas, presentaciones); no hay que configurar nada.</li>
+      <li><strong>2</strong> El entregable aparece como archivo listo para descargar o guardar.</li>
+    </ol>
+  </div>
+
+  <figure class="ui-shot reveal">
+    <img src="capturas/04-claude-code.png" alt="Captura real de Claude Code trabajando sobre un proyecto: instrucciones en castellano y actividad sobre archivos reales" loading="lazy">
+    <figcaption>Captura — Claude Code trabajando sobre un proyecto real.</figcaption>
+  </figure>
+
+  <div class="prose reveal">
+    <p>En la captura: Claude Code en acción. Se le escribe en castellano, como a un colaborador, y ejecuta sobre archivos y comandos reales del proyecto.</p>
+  </div>
+
+  <aside class="note reveal">
+    <span class="note-label">Nota</span>
+    <p>Conectores y Claude Code ya son capturas reales de la cuenta; la ventana principal y las skills quedan como esquemas, que sobreviven mejor a los cambios de interfaz.</p>
+  </aside>
 </section>
 <section class="sec" id="s03" aria-labelledby="h-s03">
   <header class="sec-head reveal">
